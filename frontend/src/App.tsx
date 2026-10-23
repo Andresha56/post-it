@@ -7,10 +7,12 @@ import { CreatePostPage } from './pages/CreatePostPage';
 import { ContentPage } from './pages/ContentPage';
 import { CalendarPage } from './pages/CalendarPage';
 import { PlaceholderPage } from './pages/PlaceholderPage';
+import { ProtectedRoute } from './components/auth/ProtectedRoute';
 
 const LandingPage = lazy(() => import('./pages/LandingPage'));
 const SignInPage = lazy(() => import('./pages/SignInPage'));
 const SignUpPage = lazy(() => import('./pages/SignUpPage'));
+const VerifyEmailPage = lazy(() => import('./pages/VerifyEmailPage'));
 
 export default function App() {
   return <>
@@ -19,6 +21,8 @@ export default function App() {
       <Route path="/" element={<LandingPage/>}/>
       <Route path="/signin" element={<SignInPage/>}/>
       <Route path="/signup" element={<SignUpPage/>}/>
+      <Route path="/verify-email" element={<VerifyEmailPage/>}/>
+      <Route element={<ProtectedRoute/>}>
       <Route element={<AppLayout/>}>
         <Route path="dashboard" element={<DashboardPage/>}/>
         <Route path="create" element={<CreatePostPage/>}/>
@@ -32,6 +36,7 @@ export default function App() {
         <Route path="agent-api" element={<PlaceholderPage/>}/>
         <Route path="settings" element={<PlaceholderPage/>}/>
         <Route path="*" element={<Navigate to="/dashboard" replace/>}/>
+      </Route>
       </Route>
     </Routes>
     </Suspense>

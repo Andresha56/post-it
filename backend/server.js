@@ -5,127 +5,133 @@ const cluster = require("node:cluster");
 const os = require("node:os");
 const express = require("express");
 const cors = require("cors");
-
+const ErrorHandler = require("./middleware/error-handler");
 const { ApolloServer } = require("@apollo/server");
 const { expressMiddleware } = require("@as-integrations/express5");
 const { buildSubgraphSchema } = require("@apollo/subgraph");
 
-const { mergedTypeDefs, mergedResolvers } = require("./resolver");
+const { authenticateUser } = require("./middleware/auth");
+const { mergedTypeDefs, mergedResolvers } = require("./api");
 const mongoose = require("./config/mongo");
 
 const isProd = process.env.NODE_ENV === "production";
-const port = process.env.PORT || 5000;
+const port = Number(process.env.PORT) || 5000;
 
 async function startServer() {
-    // Connect to MongoDB before starting the API.
-    await mongoose.connect();
 
-    const app = express();
+  // Connect to MongoDB before starting the API.
+  await mongoose.connect();
 
-    app.use(cors());
-    app.use(express.json());
+  const app = express();
 
-    // Initialize Apollo Server with the federated subgraph schema.
-    const server = new ApolloServer({
-        schema: buildSubgraphSchema([
-            {
-                typeDefs: mergedTypeDefs,
-                resolvers: mergedResolvers,
-            },
-        ]),
-    });
+  app.use(
+    cors({
+      origin: "*",
+    }),
+  );
+  app.use(express.json());
 
-    await server.start();
+  // Public health check.
+  // app.get("/health", (_req, res) => {
+  //   res.status(200).json({
+  //     status: "ok",
+  //     service: "graphql-api",
+  //   });
+  // });
 
-    // Mount the GraphQL endpoint.
-    app.use(
-        "/graphql",
-        expressMiddleware(server),
-    );
+  // Initialize Apollo Server with the federated subgraph schema.
+  const server = new ApolloServer({
+    schema: buildSubgraphSchema([
+      {
+        typeDefs: mergedTypeDefs,
+        resolvers: mergedResolvers,
+      },
+    ]),
+  });
 
-    // Health-check endpoint.
-    app.get("/health", (_req, res) => {
-        res.status(200).json({
-            status: "ok",
-            service: "graphql-api",
+  await server.start();
+
+  // GraphQL context receives the verified Cognito user.
+  app.use(
+    "/graphql",
+    expressMiddleware(server, {
+      context: async ({ req }) => ({
+        user: await authenticateUser(req),
+      }),
+    }),
+  );
+
+  // Express error-handling middleware.
+  app.use(ErrorHandler);
+
+  const httpServer = app.listen(port, () => {
+    console.log(`GraphQL API running at http://localhost:${port}/graphql`);
+  });
+
+  // Graceful shutdown.
+  let shuttingDown = false;
+
+  const shutdown = async (signal) => {
+    if (shuttingDown) return;
+    shuttingDown = true;
+
+    console.log(`Received ${signal}. Shutting down...`);
+
+    // Force shutdown if connections do not close in time.
+    const forceExit = setTimeout(() => {
+      console.error("Graceful shutdown timed out");
+      process.exit(1);
+    }, 10000);
+
+    forceExit.unref();
+
+    try {
+      await new Promise((resolve, reject) => {
+        httpServer.close((error) => {
+          if (error) reject(error);
+          else resolve();
         });
-    });
+      });
 
-    // Express error-handling middleware.
-    app.use((err, req, res, next) => {
-        console.error("Express error:", err);
+      await server.stop();
+      await mongoose.disconnect();
 
-        if (res.headersSent) {
-            return next(err);
-        }
+      clearTimeout(forceExit);
+      console.log("Server shut down successfully");
+      process.exit(0);
+    } catch (error) {
+      console.error("Shutdown error:", error);
+      process.exit(1);
+    }
+  };
 
-        res.status(500).json({
-            message: "Internal server error",
-        });
-    });
-
-    const httpServer = app.listen(port, () => {
-        console.log(
-            `Server running at http://localhost:${port}/graphql`,
-        );
-    });
-
-    // Graceful shutdown.
-    let shuttingDown = false;
-
-    const shutdown = async () => {
-        if (shuttingDown) return;
-        shuttingDown = true;
-
-        console.log("Shutting down server...");
-
-        httpServer.close(async () => {
-            try {
-                await server.stop();
-                await mongoose.disconnect();
-
-                console.log("Server shut down successfully");
-                process.exit(0);
-            } catch (error) {
-                console.error("Shutdown error:", error);
-                process.exit(1);
-            }
-        });
-    };
-
-    process.once("SIGINT", shutdown);
-    process.once("SIGTERM", shutdown);
+  process.once("SIGINT", () => shutdown("SIGINT"));
+  process.once("SIGTERM", () => shutdown("SIGTERM"));
 }
 
 /**
  * Cluster only in production.
  */
 if (isProd && cluster.isPrimary) {
-    const numCPUs = os.availableParallelism
-        ? os.availableParallelism()
-        : os.cpus().length;
+  const numCPUs = os.availableParallelism
+    ? os.availableParallelism()
+    : os.cpus().length;
 
-    console.log(
-        `Primary process ${process.pid} forking ${numCPUs} workers`,
-    );
+  console.log(`Primary process ${process.pid} forking ${numCPUs} workers`);
 
-    for (let i = 0; i < numCPUs; i++) {
-        cluster.fork();
-    }
+  for (let i = 0; i < numCPUs; i++) {
+    cluster.fork();
+  }
 
-    cluster.on("exit", (worker, code, signal) => {
-        console.error(
-            `Worker ${worker.process.pid} exited`,
-            { code, signal },
-        );
+  cluster.on("exit", (worker, code, signal) => {
+    console.error(`Worker ${worker.process.pid} exited`, { code, signal });
 
-        if (!cluster.isPrimary) return;
-
-        cluster.fork();
-    });
+    // Replace the failed worker.
+    cluster.fork();
+  });
 } else {
-    startServer().catch((error) => {
-        console.error("Failed to start server:", error);
-        process.exit(1);
-    });
+  startServer().catch((error) => {
+    console.error("Failed to start server:", error);
+    process.exit(1);
+  });
 }

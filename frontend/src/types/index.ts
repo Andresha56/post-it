@@ -49,3 +49,9 @@ export const signUpSchema = z.object({
   password: z.string().min(8, 'Use at least 8 characters.').max(128, 'Use 128 characters or fewer.')
 });
 export type SignUpInput = z.infer<typeof signUpSchema>;
+
+export const verifyEmailSchema = z.object({
+  email: z.string().trim().min(1, 'Enter your email address.').email('Enter a valid email address.'),
+  code: z.string().trim().regex(/^\d{6}$/, 'Enter the 6-digit code from your email.')
+});
+export type VerifyEmailInput = z.infer<typeof verifyEmailSchema>;
