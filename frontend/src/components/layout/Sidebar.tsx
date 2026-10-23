@@ -26,7 +26,7 @@ export function Sidebar({ mobileOpen, onClose }: Props) {
             <NavLink
               key={path}
               to={path}
-              end={path === '/'}
+              end={path === '/dashboard'}
               onClick={onClose}
               className={({ isActive }) => cn(
                 'group flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-medium transition',

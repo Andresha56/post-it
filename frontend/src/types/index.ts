@@ -36,3 +36,16 @@ export const createPostSchema = z.object({
   scheduledAt: z.string().optional()
 });
 export type CreatePostInput = z.infer<typeof createPostSchema>;
+
+export const signInSchema = z.object({
+  email: z.string().trim().min(1, 'Enter your email address.').email('Enter a valid email address.'),
+  password: z.string().min(1, 'Enter your password.')
+});
+export type SignInInput = z.infer<typeof signInSchema>;
+
+export const signUpSchema = z.object({
+  name: z.string().trim().min(2, 'Enter your name.').max(80, 'Keep your name under 80 characters.'),
+  email: z.string().trim().min(1, 'Enter your email address.').email('Enter a valid email address.'),
+  password: z.string().min(8, 'Use at least 8 characters.').max(128, 'Use 128 characters or fewer.')
+});
+export type SignUpInput = z.infer<typeof signUpSchema>;

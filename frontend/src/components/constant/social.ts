@@ -5,7 +5,7 @@ import {
 
 
 export const links = [
-    { label: 'Dashboard', path: '/', icon: House },
+    { label: 'Dashboard', path: '/dashboard', icon: House },
     { label: 'Social Accounts', path: '/social-accounts', icon: Link2 },
   { label: 'Create Post', path: '/create', icon: PenLine },
   { label: 'Calendar', path: '/calendar', icon: CalendarDays },

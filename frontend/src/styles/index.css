@@ -51,3 +51,5 @@ button { cursor: pointer; }
 .dark .calendar-shell .rbc-event { color: white; }
 .dark .calendar-shell .rbc-button-link { color: var(--text); }
 .dark .calendar-shell .rbc-toolbar button { color: var(--text); }
+
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
