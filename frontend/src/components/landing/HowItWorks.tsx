@@ -6,7 +6,7 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section id="how-it-works" className="scroll-mt-16 bg-[#321923] text-white">
+    <section id="how-it-works" className="scroll-mt-16 bg-[#2a1520] text-white">
       <div className="mx-auto max-w-6xl px-5 py-20 sm:px-8 lg:py-28">
         <p className="text-sm font-semibold text-[#FFB4C0]">How it works</p>
         <h2 className="mt-3 max-w-xl text-balance text-3xl font-bold tracking-tight sm:text-4xl">Three steps, then it runs on its own</h2>

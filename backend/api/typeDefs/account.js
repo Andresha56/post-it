@@ -24,6 +24,9 @@ const accountTypeDefs = gql`
     createdAt: String
     updatedAt: String
   }
+  type Query {
+    getAccount(input: ID!): Account
+  }
 `;
 
 module.exports = accountTypeDefs;

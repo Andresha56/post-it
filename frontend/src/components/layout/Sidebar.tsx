@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import {ChevronDown, Moon, Send, Sun, X} from 'lucide-react';
+import { Moon, Send, Sun, X } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { useTheme } from '../../hooks/useTheme';
 import { cn } from '../../lib/utils';
@@ -11,17 +11,17 @@ export function Sidebar({ mobileOpen, onClose }: Props) {
     <>
       {mobileOpen && <button aria-label="Close navigation overlay" className="fixed inset-0 z-40 bg-black/40 lg:hidden" onClick={onClose} />}
       <aside className={cn(
-        'fixed inset-y-0 left-0 z-50 flex w-[252px] flex-col border-r border-white/10 bg-[#321923] text-white transition-transform duration-200 lg:translate-x-0',
+        'fixed inset-y-0 left-0 z-50 flex w-[232px] flex-col border-r border-white/10 bg-[#2a1520] text-white transition-transform duration-200 lg:translate-x-0',
         mobileOpen ? 'translate-x-0' : '-translate-x-full'
       )}>
-        <div className="flex h-[72px] items-center justify-between border-b border-white/10 px-5">
-          <NavLink to="/" onClick={onClose} className="flex items-center gap-2.5 font-bold tracking-tight text-white">
-            <span className="grid size-9 place-items-center rounded-xl bg-[#F45B72]"><Send size={19} /></span>
-            <span className="text-xl">PostFlow</span>
+        <div className="flex h-14 items-center justify-between border-b border-white/10 px-4">
+          <NavLink to="/" onClick={onClose} className="flex items-center gap-2 font-semibold tracking-tight text-white">
+            <span className="grid size-7 place-items-center rounded-lg bg-brand-500"><Send size={15} /></span>
+            <span className="text-base">PostFlow</span>
           </NavLink>
-          <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 lg:hidden" onClick={onClose} aria-label="Close menu"><X size={18}/></Button>
+          <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 hover:text-white lg:hidden" onClick={onClose} aria-label="Close menu"><X size={18}/></Button>
         </div>
-        <nav aria-label="Main navigation" className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
+        <nav aria-label="Main navigation" className="flex-1 space-y-0.5 overflow-y-auto px-2 py-3">
           {links.map(({ label, path, icon: Icon }) => (
             <NavLink
               key={path}
@@ -29,33 +29,33 @@ export function Sidebar({ mobileOpen, onClose }: Props) {
               end={path === '/dashboard'}
               onClick={onClose}
               className={({ isActive }) => cn(
-                'group flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-medium transition',
-                isActive ? 'bg-[#F45B72]/20 text-[#FFB4C0] ring-1 ring-inset ring-[#F45B72]/20' : 'text-white/75 hover:bg-white/8 hover:text-white'
+                'flex h-8 items-center gap-2.5 rounded-lg px-2.5 text-[13px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500',
+                isActive ? 'bg-white/10 text-white' : 'text-white/65 hover:bg-white/5 hover:text-white'
               )}
             >
-              <Icon size={18} strokeWidth={1.8} />
-              <span className="flex-1">{label}</span>
-              {label === 'Content' && <ChevronDown size={15} className="opacity-60" />}
+              <Icon size={16} strokeWidth={1.75} />
+              <span className="flex-1 truncate">{label}</span>
             </NavLink>
           ))}
         </nav>
-        <div className="border-t border-white/10 p-4">
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-3.5">
-            <div className="flex items-center gap-3">
-              <span className="grid size-9 place-items-center rounded-xl bg-[#F45B72] font-semibold">R</span>
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-semibold">Rinki's Workspace</p>
-                <p className="mt-0.5 text-xs text-white/60">Pro Plan · 5 Members</p>
-              </div>
+        <div className="border-t border-white/10 p-3">
+          <div className="flex items-center gap-2.5 px-1">
+            <span className="grid size-7 shrink-0 place-items-center rounded-lg bg-white/10 text-xs font-semibold">R</span>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-[13px] font-medium">Rinki's Workspace</p>
+              <p className="text-xs text-white/55">Pro plan · 5 members</p>
             </div>
-            <div className="mt-4 flex items-center justify-between text-xs text-white/70"><span>Posts this month</span><span>42 / 500</span></div>
-            <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/15"><div className="h-full w-[24%] rounded-full bg-[#F45B72]" /></div>
-            <Button className="mt-4 w-full bg-[#F45B72] hover:bg-[#df405a]" onClick={() => window.alert('Plan management will be connected to the backend later.')}>Upgrade Plan</Button>
           </div>
-          <Button variant="ghost" className="mt-3 w-full justify-start text-white/75 hover:bg-white/10 hover:text-white" onClick={toggleTheme}>
-            {theme === 'light' ? <Moon size={17}/> : <Sun size={17}/>}
-            Switch to {theme === 'light' ? 'dark' : 'light'} theme
-          </Button>
+          <div className="mt-3 px-1">
+            <div className="flex items-center justify-between text-xs text-white/60"><span>Posts this month</span><span className="tabular-nums">42 / 500</span></div>
+            <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-white/15"><div className="h-full w-[8.4%] rounded-full bg-brand-500" /></div>
+          </div>
+          <div className="mt-3 flex items-center gap-1.5">
+            <Button size="sm" variant="secondary" className="flex-1 border-white/15 bg-transparent text-white hover:bg-white/10" onClick={() => window.alert('Plan management will be connected to the backend later.')}>Upgrade plan</Button>
+            <Button size="icon" variant="ghost" className="size-7 text-white/65 hover:bg-white/10 hover:text-white" onClick={toggleTheme} aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`} title={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}>
+              {theme === 'light' ? <Moon size={15}/> : <Sun size={15}/>}
+            </Button>
+          </div>
         </div>
       </aside>
     </>

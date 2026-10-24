@@ -2,24 +2,30 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
     {
-        name: {
+        cognitoSub: {
             type: String,
             required: true,
+            unique: true,
+        },
+        name: {
+            type: String,
+            trim: true,
         },
         email: {
             type: String,
             required: true,
-            unique: true
+            unique: true,
+            lowercase: true,
+            trim: true,
         },
-        password: {
+        zernioProfileId: {
             type: String,
-            required: true,
+            default: null,
         },
-        zenioProfileId: {
-            type: String,
-        },
-    
-    }, { timestamps: true }
-
+    },
+    { timestamps: true }
 );
-export default mongoose.model("User", userSchema);
+
+const User = mongoose.model("User", userSchema);
+
+module.exports = User;

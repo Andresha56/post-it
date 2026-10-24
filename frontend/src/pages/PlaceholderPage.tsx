@@ -76,19 +76,16 @@ export function PlaceholderPage() {
   return (
     <div>
       <PageHeading title={page.title} description={page.description} />
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        {page.items.map((item, index) => (
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        {page.items.map((item) => (
           <Card key={item}>
             <CardHeader>
-              <span className="grid size-10 place-items-center rounded-xl bg-rose-50 text-brand-600 dark:bg-rose-950">
-                <Icon size={19} />
-              </span>
-              <span className="text-xs text-[var(--text-muted)]">
-                0{index + 1}
+              <span className="grid size-8 place-items-center rounded-lg bg-[var(--surface-muted)] text-[var(--text-muted)]">
+                <Icon size={16} />
               </span>
             </CardHeader>
             <CardContent className="pt-3">
-              <h2 className="font-semibold text-[var(--text)]">{item}</h2>
+              <h2 className="text-sm font-semibold text-[var(--text)]">{item}</h2>
               <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">
                 {page.title === "Social accounts"
                   ? "Connection status and publishing permissions will be managed here."
@@ -96,7 +93,7 @@ export function PlaceholderPage() {
               </p>
               <Button
                 variant="secondary"
-                className="mt-4 w-full"
+                className="mt-3 w-full"
                 onClick={() => {
                   if (page.title === "Social accounts") {
                     setConnected((current) =>

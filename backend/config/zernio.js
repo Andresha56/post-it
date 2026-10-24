@@ -1,7 +1,7 @@
-const { Zernio } = require('zernio-sdk');
+const { Zernio } = require('@zernio/node');
 const zernio = new Zernio({
     apiUrl: process.env.ZERNIO_API_URL || 'https://api.zernio.com',
-    apiKey: process.env.ZERNIO_API_KEY || 'your_api_key',
+    apiKey: process.env.ZERNIO_API_KEY || '',
 });
 
 module.exports = {

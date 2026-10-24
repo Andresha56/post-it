@@ -15,14 +15,14 @@ import {
 import { enUS } from "date-fns/locale";
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import type { Post } from "../../types";
-import { Card, CardHeader, CardContent } from "../ui/Card";
+import { Card, CardHeader, CardContent, CardTitle } from "../ui/Card";
 import { Button } from "../ui/Button";
 
 const locales = { "en-US": enUS };
 const localizer = dateFnsLocalizer({
   format,
   parse,
-  startOfWeek: (date) => startOfWeek(date, { weekStartsOn: 0 }),
+  startOfWeek: (date: Date) => startOfWeek(date, { weekStartsOn: 0 }),
   getDay,
   locales,
 });
@@ -153,63 +153,27 @@ export function ContentCalendar({
   return (
     <Card className="min-w-0 overflow-hidden">
       <CardHeader className="flex-wrap items-center">
-        <div className="flex items-center gap-3">
-          <span className="grid size-9 place-items-center rounded-xl bg-rose-50 text-brand-600 dark:bg-rose-950">
-            <CalendarDaysIcon />
-          </span>
-          <div>
-            <h2 className="font-bold text-[var(--text)]">Content Calendar</h2>
-            <p className="mt-1 text-xs text-[var(--text-muted)]">
-              View and manage your upcoming posts
-            </p>
-          </div>
-        </div>
+        <CardTitle title="Content calendar" description="View and manage your upcoming posts" />
         <div className="flex flex-wrap items-center gap-1.5">
-          <Button
-            variant="secondary"
-            size="icon"
-            className="size-9"
-            aria-label="Previous period"
-            onClick={() => setDate((current) => subMonths(current, 1))}
-          >
-            <ChevronLeft size={16} />
+          <Button variant="secondary" size="icon" className="size-8" aria-label="Previous period" title="Previous period" onClick={() => setDate((current) => subMonths(current, 1))}>
+            <ChevronLeft size={15} />
           </Button>
-          <span className="min-w-[110px] text-center text-xs font-semibold text-[var(--text)]">
-            {format(date, "MMMM yyyy")}
-          </span>
-          <Button
-            variant="secondary"
-            size="icon"
-            className="size-9"
-            aria-label="Next period"
-            onClick={() => setDate((current) => addMonths(current, 1))}
-          >
-            <ChevronRight size={16} />
+          <span className="min-w-[104px] text-center text-sm font-medium tabular-nums text-[var(--text)]">{format(date, "MMMM yyyy")}</span>
+          <Button variant="secondary" size="icon" className="size-8" aria-label="Next period" title="Next period" onClick={() => setDate((current) => addMonths(current, 1))}>
+            <ChevronRight size={15} />
           </Button>
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={() => setDate(new Date())}
-          >
-            Today
-          </Button>
-          <div className="flex rounded-xl bg-[var(--surface-muted)] p-1">
+          <Button variant="secondary" size="sm" className="h-8" onClick={() => setDate(new Date())}>Today</Button>
+          <div role="tablist" aria-label="Calendar view" className="flex rounded-lg bg-[var(--surface-muted)] p-0.5">
             {(["month", "week", "day", "agenda"] as View[]).map((item) => (
-              <button
-                key={item}
-                onClick={() => setView(item)}
-                className={`rounded-lg px-2 py-1.5 text-[11px] capitalize ${view === item ? "bg-brand-600 text-white" : "text-[var(--text-muted)] hover:text-[var(--text)]"}`}
-              >
+              <button key={item} role="tab" aria-selected={view === item} onClick={() => setView(item)} className={`h-7 rounded-md px-2.5 text-xs font-medium capitalize transition-colors ${view === item ? "bg-[var(--surface)] text-[var(--text)] shadow-sm" : "text-[var(--text-muted)] hover:text-[var(--text)]"}`}>
                 {item === "agenda" ? "List" : item}
               </button>
             ))}
           </div>
-          <Button size="sm" onClick={onCreate}>
-            <Plus size={14} /> Create
-          </Button>
+          <Button size="sm" className="h-8" onClick={onCreate}><Plus size={14} /> Create</Button>
         </div>
       </CardHeader>
-      <CardContent className="mt-4">
+      <CardContent className="mt-3">
         <div className="calendar-shell h-[390px] sm:h-[450px]">
           <BigCalendar
             localizer={localizer}
@@ -231,7 +195,7 @@ export function ContentCalendar({
                 backgroundColor:
                   statusColors[event.resource.status] ?? "#e83f63",
                 border: 0,
-                borderRadius: 6,
+                borderRadius: 4,
                 color: "#fff",
                 fontSize: 11,
                 padding: "2px 5px",
@@ -243,13 +207,5 @@ export function ContentCalendar({
         </div>
       </CardContent>
     </Card>
-  );
-}
-
-function CalendarDaysIcon() {
-  return (
-    <span className="text-lg" aria-hidden="true">
-      ▦
-    </span>
   );
 }

@@ -31,14 +31,6 @@ async function startServer() {
   );
   app.use(express.json());
 
-  // Public health check.
-  // app.get("/health", (_req, res) => {
-  //   res.status(200).json({
-  //     status: "ok",
-  //     service: "graphql-api",
-  //   });
-  // });
-
   // Initialize Apollo Server with the federated subgraph schema.
   const server = new ApolloServer({
     schema: buildSubgraphSchema([
@@ -55,9 +47,7 @@ async function startServer() {
   app.use(
     "/graphql",
     expressMiddleware(server, {
-      context: async ({ req }) => ({
-        user: await authenticateUser(req),
-      }),
+      context: async ({ req }) => authenticateUser(req),
     }),
   );
 

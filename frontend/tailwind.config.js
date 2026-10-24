@@ -13,8 +13,10 @@ export default {
           700: '#b91f43'
         }
       },
-      boxShadow: {
-        soft: '0 8px 28px rgba(44, 25, 39, 0.055)'
+      borderRadius: {
+        lg: '8px',
+        xl: '8px',
+        '2xl': '10px'
       }
     }
   },

@@ -15,7 +15,7 @@ const week: Slot[] = [
 export function ProductPreview() {
   return (
     <div className="relative" aria-hidden="true">
-      <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-soft">
+      <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)]">
         <div className="flex items-center justify-between border-b border-[var(--border)] px-5 py-3.5">
           <p className="text-sm font-bold text-[var(--text)]">October 2026</p>
           <p className="text-xs text-[var(--text-muted)]">Week of Oct 20</p>
@@ -44,7 +44,7 @@ export function ProductPreview() {
           ))}
         </ul>
       </div>
-      <div className="mt-4 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-soft sm:absolute sm:-bottom-8 sm:-left-8 sm:mt-0 sm:w-64">
+      <div className="mt-4 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 sm:absolute sm:-bottom-8 sm:-left-8 sm:mt-0 sm:w-64">
         <p className="text-xs font-semibold text-[var(--text-muted)]">New post</p>
         <p className="mt-1.5 text-sm text-[var(--text)]">Our new feature is live!</p>
         <div className="mt-3 flex items-center justify-between border-t border-[var(--border)] pt-3 text-xs">

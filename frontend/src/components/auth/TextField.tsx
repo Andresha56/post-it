@@ -11,15 +11,15 @@ export function TextField({ label, error, type = 'text', className, ...props }: 
   const isPassword = type === 'password';
   return (
     <div>
-      <label htmlFor={id} className="block text-sm font-semibold text-[var(--text)]">{label}</label>
-      <div className="relative mt-2">
+      <label htmlFor={id} className="block text-sm font-medium text-[var(--text)]">{label}</label>
+      <div className="relative mt-1.5">
         <input
           id={id}
           type={isPassword && visible ? 'text' : type}
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? errorId : undefined}
           className={cn(
-            'min-h-11 w-full rounded-xl border bg-[var(--surface)] px-3.5 text-sm text-[var(--text)] outline-none transition placeholder:text-[var(--text-muted)]/70 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20',
+            'h-10 w-full rounded-lg border bg-[var(--surface)] px-3 text-sm text-[var(--text)] outline-none transition placeholder:text-[var(--text-muted)]/70 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20',
             error ? 'border-red-500' : 'border-[var(--border)]',
             isPassword && 'pr-11',
             className
@@ -27,7 +27,7 @@ export function TextField({ label, error, type = 'text', className, ...props }: 
           {...props}
         />
         {isPassword && (
-          <button type="button" onClick={() => setVisible((v) => !v)} aria-label={visible ? 'Hide password' : 'Show password'} aria-pressed={visible} className="absolute right-1.5 top-1/2 grid size-8 -translate-y-1/2 place-items-center rounded-lg text-[var(--text-muted)] hover:text-[var(--text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">
+          <button type="button" onClick={() => setVisible((v) => !v)} aria-label={visible ? 'Hide password' : 'Show password'} aria-pressed={visible} className="absolute right-1.5 top-1/2 grid size-8 -translate-y-1/2 place-items-center rounded-md text-[var(--text-muted)] hover:text-[var(--text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">
             {visible ? <EyeOff size={17} /> : <Eye size={17} />}
           </button>
         )}
