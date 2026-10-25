@@ -17,7 +17,7 @@ export function Sidebar({ mobileOpen, onClose }: Props) {
         <div className="flex h-14 items-center justify-between border-b border-white/10 px-4">
           <NavLink to="/" onClick={onClose} className="flex items-center gap-2 font-semibold tracking-tight text-white">
             <span className="grid size-7 place-items-center rounded-lg bg-brand-500"><Send size={15} /></span>
-            <span className="text-base">PostFlow</span>
+            <span className="text-base">Orbit</span>
           </NavLink>
           <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 hover:text-white lg:hidden" onClick={onClose} aria-label="Close menu"><X size={18}/></Button>
         </div>

@@ -25,16 +25,28 @@ const accountTypeDefs = gql`
     updatedAt: String
     authUrl: String
   }
+
+  type SocialAccount {
+    accountId: ID!
+    platform: AccountPlatform!
+    username: String
+  }
   type Mutation {
     connectAccount(input: ConnectAccountInput!): Account
+    disconnectAccount(input: DisconnectAccountInput!): Account
   }
 
   input ConnectAccountInput {
     platform: AccountPlatform!
   }
 
+  input DisconnectAccountInput {
+    accountId: ID!
+  }
+
   type Query {
     getAccount(input: ID!): Account
+    fetchConnectedAccounts: [SocialAccount!]!
   }
 `;
 

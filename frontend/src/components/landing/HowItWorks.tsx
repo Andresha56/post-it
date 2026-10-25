@@ -1,7 +1,7 @@
 const steps = [
   { title: 'Connect your social accounts', body: 'Add the accounts you want to publish to.' },
   { title: 'Create a post and choose when', body: 'Write your caption, then pick a date and time on the calendar.' },
-  { title: 'Let PostFlow publish it', body: 'Your post goes out at the scheduled time, and its status updates as it does.' }
+  { title: 'Let Orbit publish it', body: 'Your post goes out at the scheduled time, and its status updates as it does.' }
 ];
 
 export function HowItWorks() {

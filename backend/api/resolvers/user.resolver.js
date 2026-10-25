@@ -16,28 +16,35 @@ const userResolvers = {
     },
   },
   Mutation: {
-    createUser: async (_, { input }, { sub }) => {
-      if (!sub) {
-        throw new Error("Unauthorized request");
-      }
-
-      // A Cognito subject is required by the User model and identifies the
-      // authenticated user. Reuse the existing record on repeated requests.
-      return User.findOneAndUpdate(
-        { cognitoSub: sub },
-        {
-          $set: {
-            name: input.name,
-            email: input.email,
-            ...(input.zernioProfileId !== undefined && {
-              zernioProfileId: input.zernioProfileId,
-            }),
-          },
-          $setOnInsert: { cognitoSub: sub },
+  createUser: async (_, { input }, { sub }) => {
+  if (!sub) {
+    throw new Error("Unauthorized request");
+  }
+  console.log("Creating user with input:", input, "and sub:", sub);
+  try {
+    return await User.findOneAndUpdate(
+      { sub: sub },
+      {
+        $set: {
+          name: input.name,
+          email: input.email,
         },
-        { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true }
-      );
-    },
+        $setOnInsert: {
+          sub: sub,
+        },
+      },
+      {
+        new: true,
+        upsert: true,
+        runValidators: true,
+        setDefaultsOnInsert: true,
+      }
+    );
+  } catch (error) {
+    console.error("Create user error:", error);
+    throw new Error(error.message || "Failed to create user");
+  }
+},
   },
 };
 

@@ -10,7 +10,7 @@ export function Hero() {
           Plan your posts. Let them publish themselves.
         </h1>
         <p className="mt-6 max-w-lg text-lg leading-relaxed text-[var(--text-muted)]">
-          Connect your social accounts, write once, and pick a time on the calendar. PostFlow publishes at the moment you chose and keeps every status in one place.
+          Connect your social accounts, write once, and pick a time on the calendar. Orbit publishes at the moment you chose and keeps every status in one place.
         </p>
         <div className="mt-9 flex flex-wrap gap-3">
           <LinkButton to="/signup" size="lg">Get started <ArrowRight size={17} /></LinkButton>

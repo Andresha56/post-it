@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import {
   Activity,
@@ -9,8 +8,6 @@ import {
   Settings,
   Sparkles,
   Users,
-  CheckCircle2,
-  Plus,
   Copy,
 } from "lucide-react";
 import toast from "react-hot-toast";
@@ -72,7 +69,6 @@ export function PlaceholderPage() {
   const location = useLocation();
   const page = content[location.pathname] ?? content["/settings"];
   const Icon = page.icon;
-  const [connected, setConnected] = useState<string[]>([]);
   return (
     <div>
       <PageHeading title={page.title} description={page.description} />
@@ -87,26 +83,13 @@ export function PlaceholderPage() {
             <CardContent className="pt-3">
               <h2 className="text-sm font-semibold text-[var(--text)]">{item}</h2>
               <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">
-                {page.title === "Social accounts"
-                  ? "Connection status and publishing permissions will be managed here."
-                  : "This section is scaffolded and ready for backend integration."}
+                This section is scaffolded and ready for backend integration.
               </p>
               <Button
                 variant="secondary"
                 className="mt-3 w-full"
                 onClick={() => {
-                  if (page.title === "Social accounts") {
-                    setConnected((current) =>
-                      current.includes(item)
-                        ? current.filter((entry) => entry !== item)
-                        : [...current, item],
-                    );
-                    toast.success(
-                      connected.includes(item)
-                        ? `${item} disconnected in mock UI`
-                        : `${item} connected in mock UI`,
-                    );
-                  } else if (page.title === "Agent & API") {
+                  if (page.title === "Agent & API") {
                     void navigator.clipboard?.writeText(
                       "POSTFLOW_MOCK_API_KEY",
                     );
@@ -115,17 +98,7 @@ export function PlaceholderPage() {
                     toast(`${item}: backend integration will be added later.`);
                 }}
               >
-                {page.title === "Social accounts" ? (
-                  connected.includes(item) ? (
-                    <>
-                      <CheckCircle2 size={15} /> Connected (mock)
-                    </>
-                  ) : (
-                    <>
-                      <Plus size={15} /> Connect account
-                    </>
-                  )
-                ) : page.title === "Agent & API" ? (
+                {page.title === "Agent & API" ? (
                   <>
                     <Copy size={15} /> Copy mock key
                   </>

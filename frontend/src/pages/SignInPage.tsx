@@ -54,7 +54,7 @@ export default function SignInPage() {
       description="Sign in to manage and schedule your posts."
       footer={
         <>
-          New to PostFlow?{" "}
+          New to Orbit?{" "}
           <Link
             to="/signup"
             className="font-semibold text-brand-600 hover:underline"

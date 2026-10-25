@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
     {
-        cognitoSub: {
+        sub: {
             type: String,
             required: true,
             unique: true,
@@ -21,7 +21,6 @@ const userSchema = new mongoose.Schema(
         zernioProfileId: {
             type: String,
             default: null,
-            unique: true,
         },
     },
     { timestamps: true }

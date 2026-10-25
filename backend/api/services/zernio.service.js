@@ -12,7 +12,7 @@ const findZernioProfile = async (sub) => {
 };
 
 const getOrCreateZernioAccount = async (sub) => {
-  const user = await User.findOne({ cognitoSub: sub });
+  const user = await User.findOne({ sub: sub });
 
   if (!user) {
     throw new Error("User not found in MongoDB");
@@ -64,7 +64,7 @@ const getOrCreateZernioAccount = async (sub) => {
 
   // 4. Save the mapping to MongoDB.
   await User.updateOne(
-    { cognitoSub: sub },
+    { sub: sub },
     { $set: { zernioProfileId: profileId } },
   );
 

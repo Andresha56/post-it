@@ -7,6 +7,7 @@ import { CreatePostPage } from './pages/CreatePostPage';
 import { ContentPage } from './pages/ContentPage';
 import { CalendarPage } from './pages/CalendarPage';
 import { PlaceholderPage } from './pages/PlaceholderPage';
+import { SocialAccountsPage } from './pages/SocialAccountsPage';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 
 const LandingPage = lazy(() => import('./pages/LandingPage'));
@@ -31,7 +32,7 @@ export default function App() {
         <Route path="media" element={<PlaceholderPage/>}/>
         <Route path="analytics" element={<PlaceholderPage/>}/>
         <Route path="ai-studio" element={<PlaceholderPage/>}/>
-        <Route path="social-accounts" element={<PlaceholderPage/>}/>
+        <Route path="social-accounts" element={<SocialAccountsPage/>}/>
         <Route path="team" element={<PlaceholderPage/>}/>
         <Route path="agent-api" element={<PlaceholderPage/>}/>
         <Route path="settings" element={<PlaceholderPage/>}/>

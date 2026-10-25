@@ -90,7 +90,7 @@ erDiagram
     USER ||--o{ POST : creates
     POST }o--o{ SOCIAL_ACCOUNT : targets
     USER {
-        string cognitoSub
+        string sub
         string email
     }
     SOCIAL_ACCOUNT {
