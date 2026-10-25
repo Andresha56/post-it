@@ -1,5 +1,5 @@
 
-const accountTypeDefs = require("./typeDefs/account");
+const accountTypeDefs = require("./typeDefs/account.typeDefs.js");
 const userTypeDefs = require("./typeDefs/user.tyeDefs.js");
 const userResolvers = require("./resolvers/user.resolver");
 const accountResolvers = require("./resolvers/account.resolver");

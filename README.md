@@ -140,13 +140,13 @@ Example names only; match them to your code.
 
 ```dotenv
 # Frontend
-VITE_API_URL=http://localhost:4000/graphql
+VITE_API_URL= your_ai_url
 VITE_COGNITO_USER_POOL_ID=your_user_pool_id
 VITE_COGNITO_CLIENT_ID=your_app_client_id
 
 # Backend
 PORT=4000
-MONGODB_URI=mongodb://127.0.0.1:27017/social_media_platform
+MONGODB_URI=your_mongo_uri
 AWS_REGION=your_aws_region
 COGNITO_USER_POOL_ID=your_user_pool_id
 ZERNIO_API_KEY=your_secret

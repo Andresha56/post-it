@@ -23,7 +23,16 @@ const accountTypeDefs = gql`
     avatarUrl: String
     createdAt: String
     updatedAt: String
+    authUrl: String
   }
+  type Mutation {
+    connectAccount(input: ConnectAccountInput!): Account
+  }
+
+  input ConnectAccountInput {
+    platform: AccountPlatform!
+  }
+
   type Query {
     getAccount(input: ID!): Account
   }

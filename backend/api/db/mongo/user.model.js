@@ -21,6 +21,7 @@ const userSchema = new mongoose.Schema(
         zernioProfileId: {
             type: String,
             default: null,
+            unique: true,
         },
     },
     { timestamps: true }
