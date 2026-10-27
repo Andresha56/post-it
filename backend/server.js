@@ -13,7 +13,9 @@ const { buildSubgraphSchema } = require("@apollo/subgraph");
 const { authenticateUser } = require("./middleware/auth");
 const { mergedTypeDefs, mergedResolvers } = require("./api");
 const mongoose = require("./config/mongo");
+const dns = require("node:dns");
 
+dns.setServers(["8.8.8.8", "1.1.1.1"]);
 const isProd = process.env.NODE_ENV === "production";
 const port = Number(process.env.PORT) || 5000;
 

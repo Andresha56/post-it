@@ -3,15 +3,19 @@ const accountTypeDefs = require("./typeDefs/account.typeDefs.js");
 const userTypeDefs = require("./typeDefs/user.tyeDefs.js");
 const userResolvers = require("./resolvers/user.resolver");
 const accountResolvers = require("./resolvers/account.resolver");
-const {mergeTypeDefs,mergeResolvers} = require("@graphql-tools/merge");
+const contentResolver = require("./resolvers/content.resolver.js");
+const { mergeTypeDefs, mergeResolvers } = require("@graphql-tools/merge");
+const contentTypeDefs = require("./typeDefs/content.typeDefs.js");
 const mergedTypeDefs = mergeTypeDefs([
     accountTypeDefs,
     userTypeDefs,
+    contentTypeDefs,
 ])
 
 const mergedResolvers = mergeResolvers([
     accountResolvers,
     userResolvers,
+    contentResolver,
 ]);
 
 module.exports = {

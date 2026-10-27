@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const postStatusSchema = z.enum(['Published', 'Scheduled', 'Draft', 'Needs Review', 'Failed']);
 export type PostStatus = z.infer<typeof postStatusSchema>;
 
-export const socialPlatformSchema = z.enum(['Instagram', 'LinkedIn', 'X', 'TikTok', 'YouTube']);
+export const socialPlatformSchema = z.enum(['Instagram', 'LinkedIn', 'X', 'Facebook', 'YouTube']);
 export type SocialPlatform = z.infer<typeof socialPlatformSchema>;
 
 export const postSchema = z.object({

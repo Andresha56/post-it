@@ -4,7 +4,7 @@ const platforms = [
   { name: 'Instagram', value: '48.2K', label: 'Followers', change: '12.1%' },
   { name: 'LinkedIn', value: '32.8K', label: 'Followers', change: '8.6%' },
   { name: 'X', value: '28.1K', label: 'Followers', change: '15.4%' },
-  { name: 'TikTok', value: '16.7K', label: 'Followers', change: '22.3%' },
+  { name: 'Facebook', value: '16.7K', label: 'Followers', change: '22.3%' },
   { name: 'YouTube', value: '12.6K', label: 'Subscribers', change: '9.8%' }
 ];
 

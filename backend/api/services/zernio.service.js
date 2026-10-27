@@ -1,5 +1,6 @@
 const { zernio } = require("../../config/zernio");
 const User = require("../db/mongo/user.model");
+const mongoose = require("mongoose");
 
 const findZernioProfile = async (sub) => {
   const result = await zernio.profiles.listProfiles({
@@ -13,7 +14,8 @@ const findZernioProfile = async (sub) => {
 
 const getOrCreateZernioAccount = async (sub) => {
   const user = await User.findOne({ sub: sub });
-
+  console.log("Connected database:", mongoose.connection.name);
+console.log("Connected host:", mongoose.connection.host);
   if (!user) {
     throw new Error("User not found in MongoDB");
   }

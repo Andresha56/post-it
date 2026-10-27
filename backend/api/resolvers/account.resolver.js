@@ -42,6 +42,7 @@ const accountResolvers = {
   },
   Mutation: {
     connectAccount: async (_, { input }, { sub }) => {
+      console.log(sub)
       if (!sub) {
         throw new Error("Unauthorized request");
       }

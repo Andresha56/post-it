@@ -13,6 +13,8 @@ if (process.env.NODE_ENV === "production") {
 }
 
 exports.connect = () => {
-    mongoose.connect(process.env.MONGO_URI).then(() => console.log("MongoDB connected..."));
-    return mongoose.connection;
+    return mongoose.connect(process.env.MONGO_URI).then(() => {
+        console.log("MongoDB connected...");
+        return mongoose.connection;
+    });
 };
