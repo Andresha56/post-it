@@ -135,7 +135,7 @@ export function CreatePostPage() {
                 </label>
             </CardContent>
           </Card>
-          <Card>
+          {/* <Card>
             <CardHeader>
               <CardTitle title="Preview" />
             </CardHeader>
@@ -160,7 +160,7 @@ export function CreatePostPage() {
                 {media && <MediaPreview media={media} className="mt-3 max-h-56" />}
               </div>
             </CardContent>
-          </Card>
+          </Card> */}
         </div>
       </div>
     </div>

@@ -9,22 +9,18 @@ const contentResolver = {
       }
 
       try {
-        const { caption, contentType, title } = input;
+        const { caption, contentType, title, status, mediaUrls } = input;
 
         if (!caption?.trim()) {
           throw new Error("Caption prompt is required");
         }
-
-          const generatedCaption = await generateContent(caption);
-          
-          return ""
-
         const content = await Content.create({
           userId: sub,
           title,
           caption: generatedCaption,
           contentType,
-          status: "DRAFT",
+          status,
+          mediaUrls:mediaUrls ??null,
         });
 
         return {
