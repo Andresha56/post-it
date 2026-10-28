@@ -1,7 +1,9 @@
 import { CalendarDays, ChartNoAxesCombined, Instagram, Layers, Link2, Sparkles, Users } from 'lucide-react';
 import { FacebookIcon, LinkedInIcon, TikTokIcon, XIcon } from '../components/ui/BrandIcons';
-import dashboardDark from '../assets/landing/dashboard-dark.png';
-import dashboardLight from '../assets/landing/dashboard-light.png';
+import mainDark from '../assets/landing/main-dark.png';
+import mainLight from '../assets/landing/main-light.png';
+import calendarDark from '../assets/landing/calendar-dark.png';
+import calendarLight from '../assets/landing/calendar-light.png';
 import { Platform } from './content';
 import { AppRoute } from './routes';
 import {
@@ -11,16 +13,10 @@ import {
 
 const sectionHref = (id: LandingSectionId) => `#${id}`;
 
-// Temporary placeholders cropped from the design reference. Swap the sources for real
-// screenshots (keep the dimensions in sync); width/height only reserve layout space.
-const DASHBOARD_SIZE = { width: 1198, height: 616 };
-const dashboardSources = {
-  calendar: {
-    ight: dashboardLight, dark: dashboardDark
-  },
-
-  light: dashboardLight, dark: dashboardDark
-};
+const MAIN_SIZE = { width: 1901, height: 861 };
+const CALENDAR_SIZE = { width: 1052, height: 662 };
+const mainSources = { light: mainLight, dark: mainDark };
+const calendarSources = { light: calendarLight, dark: calendarDark };
 
 export const BRAND = { name: 'Sway', wordmark: 'Orbit', tagline: 'Your social media, smarter with AI.' };
 export const COPYRIGHT_YEAR = new Date().getFullYear();
@@ -45,9 +41,9 @@ export const DASHBOARD_PREVIEW: { url: string; caption: string; image: LandingIm
   url: 'app.Orbit.so / overview',
   caption: 'One workspace. Every channel. Zero chaos.',
   image: {
-    sources: dashboardSources,
+    sources: mainSources,
     alt: 'Orbitdashboard showing scheduled posts, connected accounts and upcoming content',
-    ...DASHBOARD_SIZE
+    ...MAIN_SIZE
   }
 };
 
@@ -91,7 +87,7 @@ export const SHOWCASES: ShowcaseItem[] = [
     description: 'Describe what you want to say and let the AI studio draft captions you can edit, save and schedule.',
     points: ['Captions in your brand voice', 'Variations for every channel', 'Edit and approve before publishing'],
     url: 'app.Orbit.so / ai-studio',
-    image: { sources: dashboardSources, alt: 'OrbitAI studio generating post captions', ...DASHBOARD_SIZE }
+    image: { sources: mainSources, alt: 'Orbit workspace dashboard with calendar and AI assistant', ...MAIN_SIZE }
   },
   {
     id: ShowcaseId.Calendar,
@@ -101,7 +97,7 @@ export const SHOWCASES: ShowcaseItem[] = [
     description: 'Pick a date and time visually and watch your week fill up, with the status of every post one look away.',
     points: ['Week and month views', 'Scheduled, published and draft states', 'Times shown in your local timezone'],
     url: 'app.Orbit.so / calendar',
-    image: { sources: dashboardSources, alt: 'Orbitcontent calendar with scheduled posts', ...DASHBOARD_SIZE }
+    image: { sources: calendarSources, alt: 'Orbit content calendar with scheduled posts', ...CALENDAR_SIZE }
   },
   {
     id: ShowcaseId.Analytics,
@@ -111,7 +107,7 @@ export const SHOWCASES: ShowcaseItem[] = [
     description: 'Follow performance across every channel in one dashboard and turn the results into your next post.',
     points: ['Reach and engagement per channel', 'Top performing content', 'Weekly progress at a glance'],
     url: 'app.Orbit.so / analytics',
-    image: { sources: dashboardSources, alt: 'Orbitanalytics dashboard with channel performance', ...DASHBOARD_SIZE }
+    image: { sources: mainSources, alt: 'Orbit dashboard with channel performance and scheduled content', ...MAIN_SIZE }
   }
 ];
 
