@@ -88,7 +88,7 @@ export default function VerifyEmailPage() {
     <AuthShell
       title="Verify your email"
       description={emailKnown ? `Enter the 6-digit code we sent to ${maskEmail(email)}.` : 'Enter your email address and the 6-digit code we sent you.'}
-      footer={<>Wrong address? <Link to="/signup" className="font-semibold text-brand-600 hover:underline">Back to sign up</Link></>}
+      footer={<>Wrong address? <Link to="/signup" className="font-semibold text-primary hover:underline">Back to sign up</Link></>}
     >
       <form onSubmit={handleVerify} noValidate className="space-y-5">
         {!emailKnown && (
@@ -96,7 +96,7 @@ export default function VerifyEmailPage() {
         )}
         <TextField label="Verification code" name="code" inputMode="numeric" autoComplete="one-time-code" maxLength={6} placeholder="123456" value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))} error={errors.code} />
         <div aria-live="polite">
-          {formError && <p role="alert" className="rounded-xl bg-red-50 px-3.5 py-2.5 text-sm text-red-700 dark:bg-red-500/10 dark:text-red-300">{formError}</p>}
+          {formError && <p role="alert" className="rounded-xl bg-error-bg px-3.5 py-2.5 text-sm text-error">{formError}</p>}
           {notice && <p role="status" className="rounded-xl bg-[var(--surface-muted)] px-3.5 py-2.5 text-sm text-[var(--text-muted)]">{notice}</p>}
         </div>
         <Button type="submit" className="w-full" disabled={busy}>{verifying ? 'Verifying…' : 'Verify email'}</Button>

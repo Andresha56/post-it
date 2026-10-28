@@ -57,7 +57,7 @@ export default function SignInPage() {
           New to Orbit?{" "}
           <Link
             to="/signup"
-            className="font-semibold text-brand-600 hover:underline"
+            className="font-semibold text-primary hover:underline"
           >
             Create an account
           </Link>
@@ -87,7 +87,7 @@ export default function SignInPage() {
         {error && (
           <p
             role="alert"
-            className="rounded-xl bg-red-50 px-3.5 py-2.5 text-sm text-red-700 dark:bg-red-500/10 dark:text-red-300"
+            className="rounded-xl bg-error-bg px-3.5 py-2.5 text-sm text-error"
           >
             {error}
           </p>

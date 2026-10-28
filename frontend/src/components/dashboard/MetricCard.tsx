@@ -7,7 +7,7 @@ export function MetricCard({ metric }: { metric: DashboardData['metrics'][number
       <p className="truncate text-xs text-[var(--text-muted)]">{metric.label}</p>
       <div className="mt-1 flex items-baseline gap-2">
         <p className="text-xl font-semibold tabular-nums tracking-tight text-[var(--text)]">{metric.value}</p>
-        <p className="text-xs font-medium tabular-nums text-emerald-600 dark:text-emerald-400">{metric.change}</p>
+        <p className="text-xs font-medium tabular-nums text-success">{metric.change}</p>
       </div>
     </div>
   );

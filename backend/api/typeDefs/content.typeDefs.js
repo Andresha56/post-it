@@ -23,6 +23,7 @@ const contentTypeDefs = gql`
     contentType: ContentType!
     mediaUrls: [String]
     hashtags: [String]
+    accountIds: [ID]
     status: ContentStatus!
     scheduledAt: String
     publishedAt: String
@@ -36,6 +37,7 @@ const contentTypeDefs = gql`
     contentType: ContentType!
     mediaUrls: [String]
     hashtags: [String]
+    accountIds: [ID]
     status: ContentStatus
     scheduledAt: String
   }

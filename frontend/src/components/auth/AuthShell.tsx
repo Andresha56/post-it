@@ -6,11 +6,11 @@ type Props = { title: string; description: string; children: ReactNode; footer: 
 export function AuthShell({ title, description, children, footer }: Props) {
   return (
     <div className="grid min-h-screen bg-[var(--app-bg)] lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
-      <aside className="hidden flex-col justify-between bg-[#2a1520] p-10 text-white lg:flex">
-        <Logo light />
+      <aside className="hidden flex-col justify-between border-r border-[var(--border)] bg-primary-subtle p-10 text-[var(--text)] lg:flex">
+        <Logo />
         <div>
           <p className="max-w-sm text-balance text-2xl font-semibold leading-snug tracking-tight">Plan your posts. Let them publish themselves.</p>
-          <p className="mt-4 max-w-sm leading-relaxed text-white/65">Connect your accounts, schedule on a calendar, and keep every post's status in one place.</p>
+          <p className="mt-4 max-w-sm leading-relaxed text-[var(--text-muted)]">Connect your accounts, schedule on a calendar, and keep every post's status in one place.</p>
         </div>
         <span />
       </aside>

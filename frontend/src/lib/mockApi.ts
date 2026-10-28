@@ -33,7 +33,7 @@ export const mockApi = {
     await delay(320);
     const post = postSchema.parse({
       id: `p-${crypto.randomUUID()}`,
-      title: input.title,
+      title: input.caption,
       platform: input.platform,
       status: input.status,
       scheduledAt: input.scheduledAt ? new Date(input.scheduledAt).toISOString() : undefined,

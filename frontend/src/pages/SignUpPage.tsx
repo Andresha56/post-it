@@ -50,7 +50,7 @@ export default function SignUpPage() {
           Already have an account?{" "}
           <Link
             to="/signin"
-            className="font-semibold text-brand-600 hover:underline"
+            className="font-semibold text-primary hover:underline"
           >
             Sign in
           </Link>
@@ -61,7 +61,7 @@ export default function SignUpPage() {
               <Link
                 to="/verify-email"
                 state={{ email: form.values.email.trim() }}
-                className="font-semibold text-brand-600 hover:underline"
+                className="font-semibold text-primary hover:underline"
               >
                 Enter verification code
               </Link>
@@ -101,7 +101,7 @@ export default function SignUpPage() {
         {error && (
           <p
             role="alert"
-            className="rounded-xl bg-red-50 px-3.5 py-2.5 text-sm text-red-700 dark:bg-red-500/10 dark:text-red-300"
+            className="rounded-xl bg-error-bg px-3.5 py-2.5 text-sm text-error"
           >
             {error}
           </p>

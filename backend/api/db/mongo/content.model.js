@@ -28,6 +28,10 @@ const contentSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
+    accountIds: {
+      type: [String],
+      default: [],
+    },
     status: {
       type: String,
       enum: ["DRAFT", "SCHEDULED", "PUBLISHED", "FAILED"],
@@ -45,4 +49,7 @@ const contentSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Content", contentSchema);
+
+const Content = mongoose.model("Content", contentSchema);
+
+module.exports = Content;

@@ -118,11 +118,11 @@ const fallbackEvents: CalendarEvent[] = [
 ];
 
 const statusColors: Record<string, string> = {
-  Published: "#10b981",
-  Scheduled: "#3b82f6",
-  Draft: "#94a3b8",
-  "Needs Review": "#f97316",
-  Failed: "#ef4444",
+  Published: "rgb(var(--success))",
+  Scheduled: "rgb(var(--info))",
+  Draft: "var(--text-muted)",
+  "Needs Review": "rgb(var(--warning))",
+  Failed: "rgb(var(--error))",
 };
 
 export function ContentCalendar({
@@ -193,10 +193,10 @@ export function ContentCalendar({
             eventPropGetter={(event) => ({
               style: {
                 backgroundColor:
-                  statusColors[event.resource.status] ?? "#e83f63",
+                  statusColors[event.resource.status] ?? "rgb(var(--primary))",
                 border: 0,
                 borderRadius: 4,
-                color: "#fff",
+                color: "rgb(var(--primary-foreground))",
                 fontSize: 11,
                 padding: "2px 5px",
               },

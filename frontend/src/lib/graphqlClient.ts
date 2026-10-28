@@ -1,7 +1,7 @@
 import { fetchAuthSession } from 'aws-amplify/auth';
 
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:4000/graphql';
-
+console.log(API_URL,"running at")
 type GraphQLResponse<T> = { data?: T; errors?: { message: string }[] };
 
 // The backend verifies a Cognito *access* token, so that is what we send.

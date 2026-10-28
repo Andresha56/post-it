@@ -84,7 +84,7 @@ export function SocialAccountsPage() {
         </p>
       ) : accounts.isError ? (
         <div className="mt-4 flex items-center gap-3 text-sm">
-          <p className="text-red-600">{errorText(accounts.error)}</p>
+          <p className="text-error">{errorText(accounts.error)}</p>
           <Button size="sm" variant="secondary" onClick={() => void accounts.refetch()}>Retry</Button>
         </div>
       ) : accounts.data.length === 0 && pending.length === 0 ? (
@@ -128,7 +128,7 @@ export function SocialAccountsPage() {
                 </span>
                 <div className="flex-1">
                   <p className="text-sm font-medium text-[var(--text)]">{username ? `@${username}` : label}</p>
-                  <p className="text-xs text-emerald-600">{label} · Connected</p>
+                  <p className="text-xs text-success">{label} · Connected</p>
                 </div>
                 <Button variant="secondary" disabled={isDisconnecting} onClick={() => handleDisconnect(accountId, label)}>
                   {isDisconnecting ? <Loader2 size={15} className="animate-spin" /> : <Unplug size={15} />} Disconnect

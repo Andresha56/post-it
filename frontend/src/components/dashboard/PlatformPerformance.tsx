@@ -13,7 +13,7 @@ export function PlatformPerformance() {
     <Card>
       <CardHeader className="items-center">
         <CardTitle title="Platform performance" description="Audience size and growth by platform" />
-        <select aria-label="Performance period" className="h-7 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-2 text-xs text-[var(--text)] outline-none focus:border-brand-500"><option>Last 30 days</option><option>Last 7 days</option><option>Last 90 days</option></select>
+        <select aria-label="Performance period" className="h-7 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-2 text-xs text-[var(--text)] outline-none focus:border-primary"><option>Last 30 days</option><option>Last 7 days</option><option>Last 90 days</option></select>
       </CardHeader>
       <div className="mt-3 overflow-x-auto">
         <table className="w-full min-w-[360px] text-sm">
@@ -31,7 +31,7 @@ export function PlatformPerformance() {
                 <td className="px-4 py-2 font-medium text-[var(--text)]">{platform.name}</td>
                 <td className="px-4 py-2 text-[var(--text-muted)]">{platform.label}</td>
                 <td className="px-4 py-2 text-right tabular-nums text-[var(--text)]">{platform.value}</td>
-                <td className="px-4 py-2 text-right tabular-nums text-emerald-600 dark:text-emerald-400">+{platform.change}</td>
+                <td className="px-4 py-2 text-right tabular-nums text-success">+{platform.change}</td>
               </tr>
             ))}
           </tbody>

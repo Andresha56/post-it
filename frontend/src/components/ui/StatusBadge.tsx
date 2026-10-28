@@ -2,11 +2,11 @@ import type { PostStatus } from '../../types';
 import { cn } from '../../lib/utils';
 
 const dots: Record<PostStatus, string> = {
-  Published: 'bg-emerald-500',
-  Scheduled: 'bg-blue-500',
-  Draft: 'bg-slate-400',
-  'Needs Review': 'bg-orange-500',
-  Failed: 'bg-red-500'
+  Published: 'bg-success',
+  Scheduled: 'bg-info',
+  Draft: 'bg-[var(--text-muted)]',
+  'Needs Review': 'bg-warning',
+  Failed: 'bg-error'
 };
 
 export function StatusBadge({ status, className }: { status: PostStatus; className?: string }) {
