@@ -21,12 +21,12 @@ export enum Status {
   FAILED = "FAILED",
 }
 
-const SUPPORTED_TYPES = new Set([
-  'image/jpeg',
-  'image/png',
-  'image/webp',
-  'video/mp4',
-  'video/webm',
-]);
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
+// const SUPPORTED_TYPES = new Set([
+//   'image/jpeg',
+//   'image/png',
+//   'image/webp',
+//   'video/mp4',
+//   'video/webm',
+// ]);
+// const MAX_FILE_SIZE = 5 * 1024 * 1024;
   

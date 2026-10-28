@@ -43,7 +43,7 @@ const fallbackEvents: CalendarEvent[] = [
     resource: {
       id: "e1",
       title: "Product launch",
-      platform: "Instagram",
+      platforms: ["Instagram"],
       status: "Scheduled",
       scheduledAt: new Date(2026, 9, 5, 9).toISOString(),
       views: 0,
@@ -59,7 +59,7 @@ const fallbackEvents: CalendarEvent[] = [
     resource: {
       id: "e2",
       title: "Building in public",
-      platform: "X",
+      platforms: ["X"],
       status: "Scheduled",
       scheduledAt: new Date(2026, 9, 7, 11).toISOString(),
       views: 0,
@@ -75,7 +75,7 @@ const fallbackEvents: CalendarEvent[] = [
     resource: {
       id: "e3",
       title: "Weekly update",
-      platform: "YouTube",
+      platforms: ["YouTube"],
       status: "Needs Review",
       scheduledAt: new Date(2026, 9, 10, 13).toISOString(),
       views: 0,
@@ -91,7 +91,7 @@ const fallbackEvents: CalendarEvent[] = [
     resource: {
       id: "e4",
       title: "Career advice",
-      platform: "LinkedIn",
+      platforms: ["LinkedIn"],
       status: "Scheduled",
       scheduledAt: new Date(2026, 9, 19, 10).toISOString(),
       views: 0,
@@ -107,7 +107,7 @@ const fallbackEvents: CalendarEvent[] = [
     resource: {
       id: "e5",
       title: "Behind the scenes",
-      platform: "Instagram",
+      platforms: ["Instagram"],
       status: "Draft",
       scheduledAt: new Date(2026, 9, 16, 16).toISOString(),
       views: 0,
@@ -187,7 +187,7 @@ export function ContentCalendar({
             onView={setView}
             onSelectEvent={(event) =>
               window.alert(
-                `${event.title}\nStatus: ${event.resource.status}\nPlatform: ${event.resource.platform}`,
+                `${event.title}\nStatus: ${event.resource.status}\nPlatform: ${event.resource.platforms}`,
               )
             }
             eventPropGetter={(event) => ({
