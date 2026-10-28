@@ -57,9 +57,11 @@ export function useCreatePost() {
 
         uploadedKeys.push(key);
       }
-
+      console.log(values.status)
       // 2. Create the post after the media upload succeeds.
       const input = {
+        title: values.title,
+        platforms: values.platforms?.map((platform) => platform.toLowerCase()),
         caption: values.caption,
         contentType: file
           ? media?.kind === 'image'
@@ -79,7 +81,6 @@ export function useCreatePost() {
           .filter(Boolean)
           .map((tag) => (tag.startsWith('#') ? tag : `#${tag}`)),
       };
-
       const result = await graphqlRequest<CreateData>(CREATE_CONTENT, {
         input,
       });

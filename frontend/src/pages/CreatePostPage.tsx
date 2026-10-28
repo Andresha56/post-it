@@ -13,10 +13,10 @@ import { inputClass, labelClass } from "../components/ui/Input";
 import { PageHeading } from "../components/layout/AppLayout";
 import { CaptionEditor } from "../components/post/CaptionEditor";
 import { MediaPicker } from "../components/post/MediaPicker";
-import { socialPltforms, Status } from "../constant/content";
+import { socialPlatforms, Status } from "../constant/content";
 import { useCreatePost } from "../hooks/useCreatePost";
 import { createPostSchema, type CreatePostType } from "../types";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import type { PostMedia } from "../types/content";
 
 export function CreatePostPage() {
@@ -32,8 +32,9 @@ export function CreatePostPage() {
   } = useForm<CreatePostType>({
     resolver: zodResolver(createPostSchema),
     defaultValues: {
+      title: "",
       caption: "",
-      platform: "Instagram",
+      platforms: [],
       scheduledAt: "",
       hashtags: "",
       status: Status.DRAFT,
@@ -42,12 +43,17 @@ export function CreatePostPage() {
   });
 
   const scheduledAt = watch("scheduledAt");
-  const status = scheduledAt ? "Scheduled" : "Draft";
+const onSubmit = useCallback(
+  handleSubmit(async (values) => {
+    const updatedValues = {
+      ...values,
+      status: scheduledAt ? Status.SCHEDULED : Status.DRAFT as any
+    };
 
-  const onSubmit = handleSubmit(async (values) => {
-    console.log(values)
-    await OnSave(values,media);
-  });
+    await OnSave(updatedValues, media);
+  }),
+  [handleSubmit, scheduledAt, OnSave, media,],
+);
 
   return (
     <div className="mx-auto max-w-5xl">
@@ -65,6 +71,31 @@ export function CreatePostPage() {
               </CardHeader>
 
               <CardContent className="space-y-4 pt-3">
+                <label className={labelClass}>
+                  Title
+                  <Controller
+                    name="title"
+                    control={control}
+                    render={({ field }) => (
+                      <input
+                        {...field}
+                        required
+                        maxLength={30}
+                        placeholder="A short title for your post"
+                        className={`${inputClass} mt-1.5 font-normal`}
+                      />
+                    )}
+                  />
+                  {errors.title && (
+                    <span
+                      role="alert"
+                      className="mt-1 block text-sm text-red-600"
+                    >
+                      {errors.title.message}
+                    </span>
+                  )}
+                </label>
+
                 <div>
                   <Controller
                     name="caption"
@@ -149,7 +180,7 @@ export function CreatePostPage() {
                   <Button type="submit" disabled={isSubmitting}>
                     {isSubmitting
                       ? "Saving…"
-                      : status === "Draft"
+                      : status === Status.DRAFT
                         ? "Save draft"
                         : "Schedule post"}
                   </Button>
@@ -164,33 +195,41 @@ export function CreatePostPage() {
                 </CardHeader>
 
                 <CardContent className="space-y-4 pt-3">
-                  <label className={labelClass}>
-                    Platform
+                  <div className={labelClass}>
+                    <p>Platforms</p>
+
                     <Controller
-                      name="platform"
+                      name="platforms"
                       control={control}
                       render={({ field }) => (
                         <select
-                          {...field}
+                          value={field.value[0] ?? ""}
+                          onChange={(event) => {
+                            const value = event.target
+                              .value as CreatePostType["platforms"][number];
+                            field.onChange(value ? [value] : []);
+                          }}
                           className={`${inputClass} mt-1.5 font-normal`}
                         >
-                          {socialPltforms.map((name) => (
-                            <option key={name} value={name}>
-                              {name}
+                          <option value="">Select a platform</option>
+                          {socialPlatforms.map((platform) => (
+                            <option key={platform} value={platform}>
+                              {platform}
                             </option>
                           ))}
                         </select>
                       )}
                     />
-                    {errors.platform && (
+
+                    {errors.platforms && (
                       <span
                         role="alert"
                         className="mt-1 block text-sm text-red-600"
                       >
-                        {errors.platform.message}
+                        {errors.platforms.message}
                       </span>
                     )}
-                  </label>
+                  </div>
 
                   <label className={labelClass}>
                     Date and time

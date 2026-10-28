@@ -33,6 +33,7 @@ const contentResolver = {
           caption,
           contentType,
           title,
+          platforms,
           status = "DRAFT",
           mediaUrls,
           hashtags,
@@ -41,6 +42,15 @@ const contentResolver = {
         } = input;
 
         const normalizedHashtags = normalizeHashtags(hashtags ?? []);
+        if (typeof title !== "string" || !title.trim()) {
+          throw new Error("Title is required");
+        }
+        if (title.trim().length > 30) {
+          throw new Error("Title must be 30 characters or fewer");
+        }
+        if (!Array.isArray(platforms) || platforms.length === 0) {
+          throw new Error("Select at least one platform");
+        }
         // mediaUrls holds S3 object keys issued by createUploadUrl, never URLs.
         const mediaKeys = mediaUrls ?? [];
         assertValidMediaKeys({ userId: sub, contentType, mediaUrls: mediaKeys });
@@ -68,7 +78,8 @@ const contentResolver = {
         }
         const content = await Content.create({
           userId: sub,
-          title,
+          title: title.trim(),
+          platforms,
           caption: caption.trim(),
           contentType,
           status,

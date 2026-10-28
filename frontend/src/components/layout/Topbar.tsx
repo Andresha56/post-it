@@ -18,7 +18,7 @@ export function Topbar({ onMenuClick, onCreateClick, onSearch }: Props) {
         <Button onClick={onCreateClick} className="ml-2"><Plus size={15}/><span className="hidden sm:inline">Create post</span></Button>
         <div className="ml-3 hidden items-center gap-2 border-l border-[var(--border)] pl-3 sm:flex">
           <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=96&q=80" alt="" className="size-7 rounded-full object-cover"/>
-          <div className="hidden xl:block"><p className="text-[13px] font-medium leading-4 text-[var(--text)]">Rinki</p><p className="text-xs leading-4 text-[var(--text-muted)]">Workspace owner</p></div>
+          <div className="hidden xl:block"><p className="text-[13px] font-medium leading-4 text-[var(--text)]">Andresha</p><p className="text-xs leading-4 text-[var(--text-muted)]">Workspace owner</p></div>
         </div>
       </div>
     </header>

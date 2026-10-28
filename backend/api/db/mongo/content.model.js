@@ -9,7 +9,15 @@ const contentSchema = new mongoose.Schema(
     },
     title: {
       type: String,
+      required: true,
       trim: true,
+      minlength: 1,
+      maxlength: 30,
+    },
+    platforms: {
+      type: [{ type: String, enum: ["instagram", "x", "facebook", "linkedin", "youtube"] }],
+      required: true,
+      default: [],
     },
     caption: {
       type: String,

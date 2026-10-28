@@ -12,6 +12,7 @@ import type { PostStatus } from '../types';
 type ContentRecord = {
   id: string;
   title: string | null;
+  platforms: string[] | null;
   caption: string;
   contentType: 'TEXT' | 'IMAGE' | 'VIDEO' | 'CAROUSEL';
   mediaUrls: string[] | null;
@@ -71,6 +72,7 @@ export function ContentPage() {
                 <tr key={post.id} className="hover:bg-[var(--surface-muted)]">
                   <td className="px-5 py-4">
                     <p className="font-semibold text-[var(--text)]">{post.title?.trim() || post.caption}</p>
+                    {!!post.platforms?.length && <p className="mt-1 text-xs text-[var(--text-muted)]">{post.platforms.join(', ')}</p>}
                     {!!post.hashtags?.length && <p className="mt-1 text-xs text-primary">{post.hashtags.join(' ')}</p>}
                     {!!post.mediaUrls?.length && <p className="mt-1 text-xs text-[var(--text-muted)]">{post.mediaUrls.length} media attachment{post.mediaUrls.length === 1 ? '' : 's'}</p>}
                   </td>

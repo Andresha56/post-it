@@ -7,12 +7,13 @@ export enum Platform {
   YouTube = "YouTube",
 }
 
-export const socialPltforms = [
-    Platform.Facebook,
-    Platform.Instagram,
-    Platform.LinkedIn,
-    Platform.X
-]
+export const socialPlatforms = [
+  Platform.Facebook,
+  Platform.Instagram,
+  Platform.LinkedIn,
+  Platform.X,
+  Platform.TikTok,
+] as const;
 export enum Status {
   DRAFT = "DRAFT",
   SCHEDULED = "SCHEDULED",

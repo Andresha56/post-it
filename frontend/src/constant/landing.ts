@@ -22,7 +22,7 @@ const dashboardSources = {
   light: dashboardLight, dark: dashboardDark
 };
 
-export const BRAND = { name: 'Sway', wordmark: 'sway', tagline: 'Your social media, smarter with AI.' };
+export const BRAND = { name: 'Sway', wordmark: 'Orbit', tagline: 'Your social media, smarter with AI.' };
 export const COPYRIGHT_YEAR = new Date().getFullYear();
 
 export const NAV_LINKS: AnchorLink[] = [
@@ -42,7 +42,7 @@ export const HERO = {
 };
 
 export const DASHBOARD_PREVIEW: { url: string; caption: string; image: LandingImage } = {
-  url: 'app.sway.so / overview',
+  url: 'app.Orbit.so / overview',
   caption: 'One workspace. Every channel. Zero chaos.',
   image: {
     sources: dashboardSources,
@@ -90,7 +90,7 @@ export const SHOWCASES: ShowcaseItem[] = [
     title: 'Go from idea to ready-to-post in seconds',
     description: 'Describe what you want to say and let the AI studio draft captions you can edit, save and schedule.',
     points: ['Captions in your brand voice', 'Variations for every channel', 'Edit and approve before publishing'],
-    url: 'app.sway.so / ai-studio',
+    url: 'app.Orbit.so / ai-studio',
     image: { sources: dashboardSources, alt: 'OrbitAI studio generating post captions', ...DASHBOARD_SIZE }
   },
   {
@@ -100,7 +100,7 @@ export const SHOWCASES: ShowcaseItem[] = [
     title: 'See your whole content plan at a glance',
     description: 'Pick a date and time visually and watch your week fill up, with the status of every post one look away.',
     points: ['Week and month views', 'Scheduled, published and draft states', 'Times shown in your local timezone'],
-    url: 'app.sway.so / calendar',
+    url: 'app.Orbit.so / calendar',
     image: { sources: dashboardSources, alt: 'Orbitcontent calendar with scheduled posts', ...DASHBOARD_SIZE }
   },
   {
@@ -110,7 +110,7 @@ export const SHOWCASES: ShowcaseItem[] = [
     title: 'Understand what resonates with your audience',
     description: 'Follow performance across every channel in one dashboard and turn the results into your next post.',
     points: ['Reach and engagement per channel', 'Top performing content', 'Weekly progress at a glance'],
-    url: 'app.sway.so / analytics',
+    url: 'app.Orbit.so / analytics',
     image: { sources: dashboardSources, alt: 'Orbitanalytics dashboard with channel performance', ...DASHBOARD_SIZE }
   }
 ];

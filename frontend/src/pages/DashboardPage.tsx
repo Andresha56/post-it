@@ -27,7 +27,7 @@ export function DashboardPage() {
   return (
     <div className="space-y-4">
       <PageHeading
-        title={`${greeting}, Rinki`}
+        title={`${greeting}, Andresha`}
         description={`${format(new Date(), 'EEEE, MMMM d, yyyy')} · 3 posts scheduled this week`}
         actions={<Button variant="secondary" onClick={() => navigate('/calendar')}>View schedule</Button>}
       />

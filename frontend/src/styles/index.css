@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 /*
- * Sway design tokens. Neutral tokens are hex (used as var(--x)); tokens that Tailwind maps
+ * Orbitdesign tokens. Neutral tokens are hex (used as var(--x)); tokens that Tailwind maps
  * (primary, status) are space-separated RGB channels so opacity modifiers like ring-primary/20
  * work. In plain CSS or inline styles, wrap them as rgb(var(--primary)).
  */

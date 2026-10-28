@@ -19,6 +19,7 @@ const contentTypeDefs = gql`
     id: ID
     userId: ID
     title: String
+    platforms: [AccountPlatform!]
     caption: String!
     contentType: ContentType!
     mediaUrls: [String]
@@ -32,7 +33,8 @@ const contentTypeDefs = gql`
   }
 
   input CreateContentInput {
-    title: String
+    title: String!
+    platforms: [AccountPlatform!]!
     caption: String!
     contentType: ContentType!
     mediaUrls: [String]

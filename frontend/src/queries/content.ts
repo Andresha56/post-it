@@ -5,6 +5,8 @@ export const CREATE_CONTENT = `
       message
       content {
         id
+        title
+        platforms
         caption
         contentType
         status
@@ -35,6 +37,7 @@ export const GET_CONTENTS = `
       contents {
         id
         title
+        platforms
         caption
         contentType
         mediaUrls

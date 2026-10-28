@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Status } from "../constant/content.js";
+import { Platform, Status } from "../constant/content.js";
 
 // const hashtagPattern = /^#[\p{L}\p{N}_]+$/u;
 export const postStatusSchema = z.enum([
@@ -23,7 +23,7 @@ export type SocialPlatform = z.infer<typeof socialPlatformSchema>;
 export const postSchema = z.object({
   id: z.string(),
   title: z.string().min(1),
-  platform: socialPlatformSchema,
+  platforms: z.array(socialPlatformSchema).min(1, "Select at least one platform."),
   status: postStatusSchema,
   scheduledAt: z.string().datetime().optional(),
   publishedAt: z.string().datetime().optional(),
@@ -50,13 +50,25 @@ export const dashboardSchema = z.object({
 export type DashboardData = z.infer<typeof dashboardSchema>;
 
 export const createPostSchema = z.object({
+  title: z
+    .string()
+    .trim()
+    .min(1, "Enter a short title.")
+    .max(30, "Title must be 30 characters or fewer."),
+
   caption: z
     .string()
     .trim()
     .min(3, "Please enter at least 3 characters.")
     .max(500, "Caption cannot exceed 500 characters."),
 
-  platform: socialPlatformSchema,
+  platforms: z.array(z.enum([
+    Platform.Facebook,
+    Platform.Instagram,
+    Platform.LinkedIn,
+    Platform.TikTok,
+    Platform.X
+  ])),
 
   status: z.enum([
     Status.DRAFT,

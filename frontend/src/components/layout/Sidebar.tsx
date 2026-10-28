@@ -42,7 +42,7 @@ export function Sidebar({ mobileOpen, onClose }: Props) {
           <div className="flex items-center gap-2.5 px-1">
             <span className="grid size-7 shrink-0 place-items-center rounded-lg bg-primary-light text-xs font-semibold text-primary">R</span>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-[13px] font-medium">Rinki's Workspace</p>
+              <p className="truncate text-[13px] font-medium">Andresha's Workspace</p>
               <p className="text-xs text-[var(--text-muted)]">Pro plan · 5 members</p>
             </div>
           </div>
