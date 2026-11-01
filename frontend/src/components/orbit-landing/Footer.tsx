@@ -1,6 +1,6 @@
 import type { MouseEvent } from "react";
 import { scrollToId } from "./scroll";
-import Logo, { OrbitMark } from "./Logo";
+import { Logo } from "../landing/Logo";
 import { PLATFORMS, PlatformIcon } from "./Platforms";
 
 const PRODUCT_LINKS = [
@@ -28,9 +28,9 @@ export default function Footer() {
             <div className="mx-auto max-w-7xl px-4 pt-16 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-2 gap-10 pb-16 md:grid-cols-12">
                     <div className="col-span-2 md:col-span-5">
-                        <a href="#" onClick={(e) => e.preventDefault()} data-testid="footer-logo" className="inline-block">
+                        <div data-testid="footer-logo" className="inline-block">
                             <Logo />
-                        </a>
+                        </div>
                         <p className="mt-4 max-w-xs text-sm leading-relaxed text-orbit-muted-foreground">
                             Create, schedule, and publish content across all your
                             social accounts from one simple workspace.
@@ -129,7 +129,12 @@ export default function Footer() {
                 <div className="flex flex-col items-center justify-between gap-3 border-t border-orbit-border py-6 text-sm text-orbit-muted-foreground sm:flex-row">
                     <span>© 2025 Orbit, Inc. All rights reserved.</span>
                     <span className="inline-flex items-center gap-2">
-                        <OrbitMark className="size-4 text-orbit-foreground" />
+                        <span className="grid size-5 place-items-center rounded-[6px] bg-primary text-primary-foreground">
+                            <svg width="12" height="12" viewBox="0 0 30 30" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                <path d="M7 17 12.5 5.5 18 24.5 23.5 12.5" />
+                                <path d="M7.5 21.5 11 14M19.5 19.5 23 11.5" strokeWidth="1.8" opacity=".7" />
+                            </svg>
+                        </span>
                         Made for creators and teams
                     </span>
                 </div>

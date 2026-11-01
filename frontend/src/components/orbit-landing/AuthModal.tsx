@@ -3,7 +3,6 @@ import type { FormEvent } from 'react';
 import { toast } from 'sonner';
 import * as Dialog from '@radix-ui/react-dialog';
 import { Check, Loader2, X } from 'lucide-react';
-import { OrbitMark } from './Logo';
 import type { AuthMode } from './types';
 
 const inputCls =
@@ -57,7 +56,12 @@ export default function AuthModal({
                     </Dialog.Close>
 
                     <div className="flex flex-col items-center text-center">
-                        <OrbitMark className="size-10 text-orbit-foreground" />
+                        <span className="grid size-10 place-items-center rounded-[10px] bg-primary text-primary-foreground">
+                            <svg width="24" height="24" viewBox="0 0 30 30" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                <path d="M7 17 12.5 5.5 18 24.5 23.5 12.5" />
+                                <path d="M7.5 21.5 11 14M19.5 19.5 23 11.5" strokeWidth="1.8" opacity=".7" />
+                            </svg>
+                        </span>
                         <Dialog.Title className="orbit-font-display mt-4 text-2xl font-semibold tracking-tight">
                             {mode === 'signup' ? 'Create your account' : 'Welcome back'}
                         </Dialog.Title>

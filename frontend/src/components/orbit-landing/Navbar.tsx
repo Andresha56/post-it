@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Menu, Moon, Sun, X } from "lucide-react";
 import { useTheme } from "../../hooks/useTheme";
 import { scrollToId } from "./scroll";
-import Logo from "./Logo";
+import { Logo } from "../landing/Logo";
 import type { AuthMode } from "./types";
 
 const LINKS = [
@@ -63,18 +63,18 @@ export default function Navbar({ onAuth }: { onAuth: (m: AuthMode) => void }) {
             }`}
         >
             <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-                <a
-                    href="#"
+                <span
                     data-testid="nav-logo-link"
-                    onClick={(e) => {
+                    onClickCapture={(e) => {
                         e.preventDefault();
+                        e.stopPropagation();
                         window.scrollTo({ top: 0, behavior: "smooth" });
                         setOpen(false);
                     }}
-                    className="transition-opacity hover:opacity-80"
+                    className="cursor-pointer transition-opacity hover:opacity-80"
                 >
                     <Logo />
-                </a>
+                </span>
 
                 <nav className="hidden items-center gap-1 md:flex">
                     {LINKS.map((l) => (
