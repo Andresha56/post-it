@@ -1,0 +1,100 @@
+/*
+ * Orbit landing page design system (from the Emergent implementation).
+ * Tokens are orb-prefixed and utilities are orbit-prefixed so they never
+ * collide with the app's own token layer.
+ */
+:root {
+    --orb-background: 0 0% 100%;
+    --orb-foreground: 240 5% 12%;
+    --orb-card: 0 0% 100%;
+    --orb-muted: 240 16% 93%;
+    --orb-muted-foreground: 240 5% 48%;
+    --orb-brand: 251 75% 59%;
+    --orb-surface: 240 23% 97%;
+    --orb-success: 160 84% 32%;
+    --orb-warning: 38 92% 40%;
+    --orb-border: 240 16% 92%;
+    --orb-input: 240 16% 92%;
+    --orb-ring: 251 75% 59%;
+}
+
+.dark {
+    --orb-background: 240 5% 12%;
+    --orb-foreground: 0 0% 100%;
+    --orb-card: 240 7.5% 16%;
+    --orb-muted: 240 16% 20%;
+    --orb-muted-foreground: 240 10% 66%;
+    --orb-brand: 249 82% 63%;
+    --orb-surface: 240 6% 14%;
+    --orb-success: 160 84% 39%;
+    --orb-warning: 38 92% 50%;
+    --orb-border: 240 10% 23%;
+    --orb-input: 240 10% 23%;
+    --orb-ring: 249 82% 63%;
+}
+
+.orbit-landing {
+    font-family: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+}
+
+.orbit-font-sans {
+    font-family: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+}
+
+.orbit-font-display {
+    font-family: "Bricolage Grotesque", "Instrument Sans", sans-serif;
+}
+
+.orbit-font-serif {
+    font-family: "Instrument Serif", Georgia, serif;
+}
+
+.orbit-font-mono {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+}
+
+.orbit-dots {
+    background-image: radial-gradient(hsl(var(--orb-foreground) / 0.13) 1px, transparent 1px);
+    background-size: 26px 26px;
+}
+
+.orbit-noise {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='160' height='160' filter='url(%23n)' opacity='0.55'/></svg>");
+}
+
+.orbit-mask-x {
+    -webkit-mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+    mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+}
+
+.orbit-mask-radial {
+    -webkit-mask-image: radial-gradient(ellipse 70% 70% at 50% 40%, black 30%, transparent 75%);
+    mask-image: radial-gradient(ellipse 70% 70% at 50% 40%, black 30%, transparent 75%);
+}
+
+.orbit-marquee-track {
+    animation: orbit-marquee 55s linear infinite;
+}
+
+.orbit-marquee:hover .orbit-marquee-track {
+    animation-play-state: paused;
+}
+
+@keyframes orbit-marquee {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .orbit-landing *,
+    .orbit-landing *::before,
+    .orbit-landing *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
