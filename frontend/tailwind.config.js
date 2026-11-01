@@ -8,6 +8,20 @@ export default {
   theme: {
     extend: {
       colors: {
+        orbit: {
+          background: 'hsl(var(--orb-background) / <alpha-value>)',
+          foreground: 'hsl(var(--orb-foreground) / <alpha-value>)',
+          card: 'hsl(var(--orb-card) / <alpha-value>)',
+          muted: 'hsl(var(--orb-muted) / <alpha-value>)',
+          'muted-foreground': 'hsl(var(--orb-muted-foreground) / <alpha-value>)',
+          brand: 'hsl(var(--orb-brand) / <alpha-value>)',
+          surface: 'hsl(var(--orb-surface) / <alpha-value>)',
+          border: 'hsl(var(--orb-border) / <alpha-value>)',
+          input: 'hsl(var(--orb-input) / <alpha-value>)',
+          ring: 'hsl(var(--orb-ring) / <alpha-value>)',
+          success: 'hsl(var(--orb-success) / <alpha-value>)',
+          warning: 'hsl(var(--orb-warning) / <alpha-value>)'
+        },
         primary: {
           DEFAULT: token('primary'),
           hover: token('primary-hover'),
