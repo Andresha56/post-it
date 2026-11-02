@@ -3,11 +3,8 @@ import { PLATFORM_LABELS } from '../constant/socialPlatforms';
 import {
   Activity,
   ChartNoAxesCombined,
-  Code2,
-  Image,
   Link2,
   Settings,
-  Sparkles,
   Users,
   Copy,
 } from "lucide-react";
@@ -20,12 +17,6 @@ const content: Record<
   string,
   { title: string; description: string; icon: typeof Activity; items: string[] }
 > = {
-  "/media": {
-    title: "Media library",
-    description: "Keep your creative assets organized in one place.",
-    icon: Image,
-    items: ["Brand images", "Product photos", "Campaign creatives"],
-  },
   "/analytics": {
     title: "Analytics",
     description:
@@ -33,12 +24,7 @@ const content: Record<
     icon: ChartNoAxesCombined,
     items: ["Audience growth", "Engagement trends", "Top-performing posts"],
   },
-  "/ai-studio": {
-    title: "AI Studio",
-    description: "Plan campaigns and develop platform-ready content.",
-    icon: Sparkles,
-    items: ["Campaign planner", "Caption assistant", "Content repurposing"],
-  },
+ 
   "/social-accounts": {
     title: "Social accounts",
     description: "Manage the social channels connected to your workspace.",
@@ -52,12 +38,7 @@ const content: Record<
     icon: Users,
     items: ["Workspace members", "Pending approvals", "Roles and permissions"],
   },
-  "/agent-api": {
-    title: "Agent & API",
-    description: "Connect tools and build controlled AI-powered workflows.",
-    icon: Code2,
-    items: ["REST API", "MCP tools", "API keys and webhooks"],
-  },
+  
   "/settings": {
     title: "Settings",
     description: "Manage workspace preferences and account settings.",
