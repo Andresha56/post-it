@@ -148,6 +148,15 @@ export function ContentPage() {
 
                     <td className="px-5 py-4">
                       <StatusBadge status={DISPLAY_STATUS[post.status]} />
+
+                      {post.statusReason ? (
+                        <p
+                          className="mt-1 max-w-[220px] text-xs text-[var(--text-muted)]"
+                          data-testid={`post-status-reason-${post.id}`}
+                        >
+                          {post.statusReason}
+                        </p>
+                      ) : null}
                     </td>
 
                     <td className="px-5 py-4 text-[var(--text-muted)]">

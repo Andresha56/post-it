@@ -1,7 +1,18 @@
 const getOrCreateZernioAccount = require("../services/zernio.service");
-const { SUPPORTED_PLATFORMS, ZERNIO_PLATFORM_NAMES, normalizePlatform } = require("../constants/socialPlatforms");
+const {
+  SUPPORTED_PLATFORMS,
+  ZERNIO_PLATFORM_NAMES,
+} = require("../constants/socialPlatforms");
+const { DISCONNECTED_ACCOUNT_REASON } = require("../constants/contentStatus");
 const { zernio } = require("../../config/zernio");
-const User = require("../db/mongo/user.model");
+const {
+  listConnectedAccounts,
+  listProfileAccounts,
+} = require("../services/zernioAccounts.service");
+const {
+  cancelScheduledPostsForAccount,
+} = require("../services/zernioPosts.service");
+
 const accountResolvers = {
   Query: {
     getAccount: async (_, { input }, { sub }) => {
@@ -12,40 +23,14 @@ const accountResolvers = {
         throw new Error("Unauthorized request");
       }
       try {
-        // Find the authenticated user in MongoDB
-        const user = await User.findOne({ sub: sub });
-        if(!user) {
-          throw new Error("User not found");
-        }
-        if (!user.zernioProfileId) {
-          return [];
-        }
-
-        // Fetch accounts using the existing Zernio profile
-        const { data } = await zernio.accounts.listAccounts({
-          query: {
-            profileId: user.zernioProfileId,
-          },
-        });
-
-        const accounts = data.accounts || [];
-
-        return accounts
-          .map((account) => ({
-            accountId: account.accountId || account._id,
-            platform: normalizePlatform(account.platform),
-            username: account.username || null,
-          }))
-          .filter((account) => account.platform !== null);
+        return await listConnectedAccounts(sub);
       } catch (error) {
-
         throw new Error(error.message);
       }
     },
   },
   Mutation: {
     connectAccount: async (_, { input }, { sub }) => {
-      console.log(sub)
       if (!sub) {
         throw new Error("Unauthorized request");
       }
@@ -63,8 +48,8 @@ const accountResolvers = {
         const { data } = await zernio.connect.getConnectUrl({
           path: { platform: ZERNIO_PLATFORM_NAMES[platform] || platform },
           query: {
-              profileId: zernioProfileId,
-              scopes: "posting,analytics",
+            profileId: zernioProfileId,
+            scopes: "posting,analytics",
             redirect_url: process.env.ZERNIO_CALLBACK_URL,
             welcome: true,
           },
@@ -77,87 +62,84 @@ const accountResolvers = {
       } catch (error) {
         throw new Error(error.message || "Failed to generate connection URL");
       }
-      },
-      
-   disconnectAccount: async (_, { input }, { sub }) => {
-  if (!sub) {
-    throw new Error("Unauthorized request");
-  }
+    },
 
-  const { accountId } = input || {};
+    disconnectAccount: async (_, { input }, { sub }) => {
+      if (!sub) {
+        throw new Error("Unauthorized request");
+      }
 
-  if (!accountId || typeof accountId !== "string") {
-    throw new Error("A valid account ID is required");
-  }
+      const { accountId } = input || {};
 
-  try {
-    // 1. Find the authenticated user
-    const user = await User.findOne({ sub });
+      if (!accountId || typeof accountId !== "string") {
+        throw new Error("A valid account ID is required");
+      }
 
-    if (!user) {
-      throw new Error("User not found");
-    }
+      try {
+        // 1. Read the accounts on this user's own Zernio profile.
+        const { zernioProfileId, accounts } = await listProfileAccounts(sub);
 
-    // 2. Use the existing Zernio profile; don't create one here
-    const zernioProfileId = user.zernioProfileId;
+        if (!zernioProfileId) {
+          throw new Error("Zernio profile not found");
+        }
 
-    if (!zernioProfileId) {
-      throw new Error("Zernio profile not found");
-    }
+        // 2. Verify that the requested account belongs to this profile.
+        const account = accounts.find(
+          (item) =>
+            String(item._id) === accountId ||
+            String(item.accountId) === accountId,
+        );
 
-    // 3. Fetch accounts belonging to this profile
-    const { data } = await zernio.accounts.listAccounts({
-      query: {
-        profileId: zernioProfileId,
-      },
-    });
+        if (!account) {
+          throw new Error(
+            "Account not found or you do not have permission to disconnect it",
+          );
+        }
 
-    const accounts = data?.accounts || [];
+        // 3. Cancel every scheduled post that targets this account BEFORE the
+        //    account is removed, so the whole post is pulled from Zernio while
+        //    it can still be deleted. No other selected account receives it.
+        const cancelledPostIds = await cancelScheduledPostsForAccount({
+          sub,
+          accountId,
+          reason: DISCONNECTED_ACCOUNT_REASON,
+        });
 
-    // 4. Verify that the requested account belongs to this profile
-    const account = accounts.find(
-      (item) =>
-        String(item._id) === accountId ||
-        String(item.accountId) === accountId
-    );
-    if (!account) {
-      throw new Error(
-        "Account not found or you do not have permission to disconnect it"
-      );
-    }
+        // 4. Disconnect the account using its actual Zernio account ID.
+        const zernioAccountId = account.accountId || account._id;
 
-    // 5. Disconnect the account using its actual Zernio account ID
-    const zernioAccountId = account.accountId || account._id;
+        await zernio.accounts.deleteAccount({
+          path: {
+            accountId: zernioAccountId,
+          },
+        });
 
-    await zernio.accounts.deleteAccount({
-      path: {
-        accountId: zernioAccountId,
-      },
-    });
+        return {
+          success: true,
+          message:
+            cancelledPostIds.length > 0
+              ? `Account disconnected. ${cancelledPostIds.length} scheduled post(s) were cancelled.`
+              : "Account disconnected successfully",
+        };
+      } catch (error) {
+        console.error("Disconnect account error:", {
+          message: error.message,
+          statusCode: error.statusCode,
+        });
 
-    return {
-      success: true,
-      message: "Account disconnected successfully",
-    };
-  } catch (error) {
-    console.error("Disconnect account error:", {
-      message: error.message,
-      statusCode: error.statusCode,
-    });
+        const expectedErrors = [
+          "User not found",
+          "Zernio profile not found",
+          "Account not found or you do not have permission to disconnect it",
+        ];
 
-    const expectedErrors = [
-      "User not found",
-      "Zernio profile not found",
-      "Account not found or you do not have permission to disconnect it",
-    ];
+        if (expectedErrors.includes(error.message)) {
+          throw error;
+        }
 
-    if (expectedErrors.includes(error.message)) {
-      throw error;
-    }
-
-    throw new Error("Failed to disconnect social account");
-  }
-},
+        throw new Error("Failed to disconnect social account");
+      }
+    },
   },
 };
 

@@ -5,10 +5,12 @@ import { SOCIAL_PLATFORMS, type SocialPlatform } from "../constant/socialPlatfor
 // const hashtagPattern = /^#[\p{L}\p{N}_]+$/u;
 export const postStatusSchema = z.enum([
   "Published",
+  "Publishing",
   "Scheduled",
   "Draft",
   "Needs Review",
   "Failed",
+  "Cancelled",
 ]);
 export type PostStatus = z.infer<typeof postStatusSchema>;
 
@@ -64,7 +66,9 @@ export const createPostSchema = z.object({
     .min(3, "Please enter at least 3 characters.")
     .max(500, "Caption cannot exceed 500 characters."),
 
-  platforms: z.array(socialPlatformSchema),
+  // Selected connected social accounts. Platforms are derived from these
+  // server-side, so the client never sends platform names.
+  accountIds: z.array(z.string().min(1)),
 
   status: z.enum([
     Status.DRAFT,

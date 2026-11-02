@@ -3,10 +3,12 @@ import { cn } from '../../lib/utils';
 
 const dots: Record<PostStatus, string> = {
   Published: 'bg-success',
+  Publishing: 'bg-info',
   Scheduled: 'bg-info',
   Draft: 'bg-[var(--text-muted)]',
   'Needs Review': 'bg-warning',
-  Failed: 'bg-error'
+  Failed: 'bg-error',
+  Cancelled: 'bg-error'
 };
 
 export function StatusBadge({ status, className }: { status: PostStatus; className?: string }) {

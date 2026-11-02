@@ -12,6 +12,7 @@ const { buildSubgraphSchema } = require("@apollo/subgraph");
 
 const { authenticateUser } = require("./middleware/auth");
 const { mergedTypeDefs, mergedResolvers } = require("./api");
+const { zernioWebhookHandler } = require("./api/webhooks/zernio.webhook");
 const mongoose = require("./config/mongo");
 const dns = require("node:dns");
 
@@ -31,6 +32,14 @@ async function startServer() {
       origin: "*",
     }),
   );
+  // The Zernio webhook signature covers the raw request body, so this route
+  // must be registered before express.json() parses (and re-serializes) it.
+  app.post(
+    "/webhooks/zernio",
+    express.raw({ type: "application/json" }),
+    zernioWebhookHandler,
+  );
+
   app.use(express.json());
 
   // Initialize Apollo Server with the federated subgraph schema.

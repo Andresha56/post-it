@@ -6,6 +6,7 @@ import { Button } from "../components/ui/Button";
 import { Plus } from "lucide-react";
 import { graphqlRequest } from "../lib/graphqlClient";
 import type { ContentListData } from "../constant/content";
+import { toCalendarPost } from "../constant/content";
 import { GET_CONTENTS } from "../queries/content";
 
 export function CalendarPage() {
@@ -46,7 +47,10 @@ export function CalendarPage() {
           Loading calendar…
         </p>
       ) : (
-        <ContentCalendar posts={data as any} onCreate={() => navigate("/create")} />
+        <ContentCalendar
+          posts={data.map(toCalendarPost)}
+          onCreate={() => navigate("/create")}
+        />
       )}
     </div>
   );
