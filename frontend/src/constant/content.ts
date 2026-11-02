@@ -45,6 +45,8 @@ export type AccountResult = {
 
 export type ContentRecord = {
   id: string;
+  mediaPreviewUrls?: string[] | null;
+  zernioPostId?: string | null;
   title: string | null;
   caption: string;
   platforms: string[] | null;
@@ -68,6 +70,54 @@ export type ContentListData = {
     contents: ContentRecord[];
   };
 };
+
+export type ContentDetailData = {
+  getContent: {
+    success: boolean;
+    message: string;
+    content: ContentRecord | null;
+  };
+};
+
+// Outcome of an edit or delete on one account's copy of a post.
+export type AccountActionResult = {
+  accountId: string;
+  platform: SocialPlatform;
+  status: 'updated' | 'deleted' | 'cancelled' | 'unsupported' | 'failed' | 'skipped' | string;
+  message: string | null;
+};
+
+export type ContentMutationResult = {
+  success: boolean;
+  message: string;
+  content: Pick<ContentRecord, 'id' | 'status' | 'statusReason'> | null;
+  results: AccountActionResult[] | null;
+};
+
+export type DeleteScope = 'APP_ONLY' | 'APP_AND_SOCIAL';
+
+// What the existing Zernio integration supports once a post is live. Must stay in
+// sync with EDITABLE_PLATFORMS / UNPUBLISHABLE_PLATFORMS in the backend constants.
+export const EDITABLE_PLATFORMS: readonly SocialPlatform[] = [
+  SOCIAL_PLATFORMS.TWITTER,
+  SOCIAL_PLATFORMS.FACEBOOK,
+  SOCIAL_PLATFORMS.LINKEDIN,
+  SOCIAL_PLATFORMS.YOUTUBE,
+];
+export const UNPUBLISHABLE_PLATFORMS: readonly SocialPlatform[] = [
+  ...EDITABLE_PLATFORMS,
+  SOCIAL_PLATFORMS.THREADS,
+];
+
+// The API returns dates as epoch-millisecond strings.
+export const parseContentDate = (value: string | null | undefined) => {
+  if (!value) return null;
+  const date = new Date(/^\d+$/.test(value) ? Number(value) : value);
+  return Number.isNaN(date.getTime()) ? null : date;
+};
+
+export const formatContentDate = (value: string | null | undefined) =>
+  parseContentDate(value)?.toLocaleString() ?? '—';
 
 export const DISPLAY_STATUS: Record<ContentStatus, PostStatus> = {
   DRAFT: 'Draft',

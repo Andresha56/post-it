@@ -22,6 +22,20 @@ const contentTypeDefs = gql`
     error: String
   }
 
+  # Outcome of an edit or delete on one connected account's copy of a post:
+  # updated | deleted | cancelled | unsupported | failed | skipped
+  type AccountActionResult {
+    accountId: ID!
+    platform: AccountPlatform!
+    status: String!
+    message: String
+  }
+
+  enum DeleteScope {
+    APP_ONLY
+    APP_AND_SOCIAL
+  }
+
   type Content {
     id: ID
     userId: ID
@@ -30,6 +44,8 @@ const contentTypeDefs = gql`
     caption: String!
     contentType: ContentType!
     mediaUrls: [String]
+    # Short-lived signed URLs for displaying the private S3 media.
+    mediaPreviewUrls: [String!]
     hashtags: [String]
     accountIds: [ID]
     accountResults: [AccountResult!]
@@ -67,6 +83,7 @@ const contentTypeDefs = gql`
     success: Boolean
     message: String
     content: Content
+    results: [AccountActionResult!]
   }
 
   type ContentsResponse {
@@ -95,7 +112,11 @@ const contentTypeDefs = gql`
       input: UpdateContentInput!
     ): ContentResponse!
 
-    deleteContent(id: ID!): ContentResponse!
+    deleteContent(
+      id: ID!
+      scope: DeleteScope = APP_ONLY
+      accountIds: [ID!]
+    ): ContentResponse!
   }
 `;
 

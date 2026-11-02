@@ -27,6 +27,7 @@ export default function App() {
         <Route path="dashboard" element={<DashboardPage/>}/>
         <Route path="create" element={<CreatePostPage/>}/>
         <Route path="content" element={<ContentPage/>}/>
+        <Route path="content/:id/edit" element={<CreatePostPage/>}/>
         <Route path="calendar" element={<CalendarPage/>}/>
         <Route path="media" element={<PlaceholderPage/>}/>
         <Route path="analytics" element={<PlaceholderPage/>}/>
