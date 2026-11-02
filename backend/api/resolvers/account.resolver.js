@@ -1,4 +1,5 @@
 const getOrCreateZernioAccount = require("../services/zernio.service");
+const { SUPPORTED_PLATFORMS, ZERNIO_PLATFORM_NAMES, normalizePlatform } = require("../constants/socialPlatforms");
 const { zernio } = require("../../config/zernio");
 const User = require("../db/mongo/user.model");
 const accountResolvers = {
@@ -29,11 +30,13 @@ const accountResolvers = {
 
         const accounts = data.accounts || [];
 
-        return accounts.map((account) => ({
-          accountId: account.accountId || account._id,
-          platform: account.platform,
-          username: account.username || null,
-        }));
+        return accounts
+          .map((account) => ({
+            accountId: account.accountId || account._id,
+            platform: normalizePlatform(account.platform),
+            username: account.username || null,
+          }))
+          .filter((account) => account.platform !== null);
       } catch (error) {
 
         throw new Error(error.message);
@@ -50,15 +53,7 @@ const accountResolvers = {
       try {
         const { platform } = input;
 
-        const allowedPlatforms = [
-          "linkedin",
-          "Instagram",
-          "facebook",
-          "Youtube",
-          "tiktok",
-        ];
-
-        if (!allowedPlatforms.includes(platform)) {
+        if (!SUPPORTED_PLATFORMS.includes(platform)) {
           throw new Error("Unsupported social platform");
         }
 
@@ -66,7 +61,7 @@ const accountResolvers = {
         const zernioProfileId = await getOrCreateZernioAccount(sub);
         // Generate the OAuth connection URL.
         const { data } = await zernio.connect.getConnectUrl({
-          path: { platform },
+          path: { platform: ZERNIO_PLATFORM_NAMES[platform] || platform },
           query: {
               profileId: zernioProfileId,
               scopes: "posting,analytics",

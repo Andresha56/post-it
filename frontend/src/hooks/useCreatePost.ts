@@ -61,7 +61,7 @@ export function useCreatePost() {
       // 2. Create the post after the media upload succeeds.
       const input = {
         title: values.title,
-        platforms: values.platforms?.map((platform) => platform.toLowerCase()),
+        platforms: values.platforms,
         caption: values.caption,
         contentType: file
           ? media?.kind === 'image'

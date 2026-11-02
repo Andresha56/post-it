@@ -1,4 +1,5 @@
 import { useLocation } from "react-router-dom";
+import { PLATFORM_LABELS } from '../constant/socialPlatforms';
 import {
   Activity,
   ChartNoAxesCombined,
@@ -42,7 +43,7 @@ const content: Record<
     title: "Social accounts",
     description: "Manage the social channels connected to your workspace.",
     icon: Link2,
-    items: ["Instagram", "linkedin", "X", "facebook", "Youtube"],
+    items: [PLATFORM_LABELS.instagram, PLATFORM_LABELS.linkedin, PLATFORM_LABELS.twitter, PLATFORM_LABELS.facebook, PLATFORM_LABELS.youtube],
   },
   "/team": {
     title: "Team & approvals",

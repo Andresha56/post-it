@@ -1,20 +1,19 @@
-import { InstagramIcon, facebookIcon, LinkedInIcon, XIcon, TikTokIcon, YoutubeIcon } from "./icons";
+import { PLATFORM_LABELS, SOCIAL_PLATFORMS, type SocialPlatform } from "../../constant/socialPlatforms";
+import { InstagramIcon, facebookIcon as FacebookGlyph, LinkedInIcon, XIcon, TikTokIcon, YoutubeIcon } from "./icons";
 
-export type PlatformKey =
-    | "Instagram"
-    | "facebook"
-    | "linkedin"
-    | "X"
-    | "tiktok"
-    | "Youtube";
+// Display-only keys for platforms showcased in the locked landing design that
+// are not part of the app's canonical SOCIAL_PLATFORMS support set.
+type ShowcaseKey = "x" | "tiktok";
+
+export type PlatformKey = SocialPlatform | ShowcaseKey;
 
 export const PLATFORMS: { key: PlatformKey; name: string; color: string; mono: boolean }[] = [
-    { key: "Instagram", name: "Instagram", color: "#E1306C", mono: false },
-    { key: "facebook", name: "facebook", color: "#1877F2", mono: false },
-    { key: "linkedin", name: "linkedin", color: "#0A66C2", mono: false },
-    { key: "X", name: "X", color: "#0F1419", mono: true },
+    { key: SOCIAL_PLATFORMS.INSTAGRAM, name: PLATFORM_LABELS.instagram, color: "#E1306C", mono: false },
+    { key: SOCIAL_PLATFORMS.FACEBOOK, name: PLATFORM_LABELS.facebook, color: "#1877F2", mono: false },
+    { key: SOCIAL_PLATFORMS.LINKEDIN, name: PLATFORM_LABELS.linkedin, color: "#0A66C2", mono: false },
+    { key: "x", name: "X", color: "#0F1419", mono: true },
     { key: "tiktok", name: "TikTok", color: "#0F1419", mono: true },
-    { key: "Youtube", name: "Youtube", color: "#FF0000", mono: false },
+    { key: SOCIAL_PLATFORMS.YOUTUBE, name: PLATFORM_LABELS.youtube, color: "#FF0000", mono: false },
 ];
 
 export function PlatformIcon({
@@ -26,17 +25,17 @@ export function PlatformIcon({
 }) {
     const cls = className ?? "size-4";
     switch (platform) {
-        case "Instagram":
+        case SOCIAL_PLATFORMS.INSTAGRAM:
             return <InstagramIcon className={cls} />;
-        case "facebook":
-            return <facebookIcon className={cls} />;
-        case "linkedin":
+        case SOCIAL_PLATFORMS.FACEBOOK:
+            return <FacebookGlyph className={cls} />;
+        case SOCIAL_PLATFORMS.LINKEDIN:
             return <LinkedInIcon className={cls} />;
-        case "X":
+        case "x":
             return <XIcon className={cls} />;
         case "tiktok":
             return <TikTokIcon className={cls} />;
-        case "Youtube":
+        case SOCIAL_PLATFORMS.YOUTUBE:
             return <YoutubeIcon className={cls} />;
     }
 }

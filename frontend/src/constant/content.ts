@@ -1,21 +1,9 @@
 import type { PostStatus } from "../types";
 
-export enum Platform {
-  Instagram = "Instagram",
-  linkedin = "linkedin",
-  TikTok = "TikTok",
-  X = "X",
-  facebook = "facebook",
-  Youtube = "Youtube",
-}
+import { SOCIAL_PLATFORMS, SOCIAL_PLATFORM_LIST, type SocialPlatform } from "./socialPlatforms";
 
-export const socialPlatforms = [
-  Platform.facebook,
-  Platform.Instagram,
-  Platform.linkedin,
-  Platform.X,
-  Platform.TikTok,
-] as const;
+export { SOCIAL_PLATFORMS, SOCIAL_PLATFORM_LIST };
+export type { SocialPlatform };
 export enum Status {
   DRAFT = "DRAFT",
   SCHEDULED = "SCHEDULED",
@@ -75,14 +63,13 @@ export const statusColors: Record<string, string> = {
   FAILED: 'rgb(var(--error))',
 };
 
-export const platformColors: Record<string, string> = {
-  INSTAGRAM: '#E1306C',
-  FACEBOOK: '#1877F2',
-  LINKEDIN: '#0A66C2',
-  TWITTER: '#1DA1F2',
-  X: '#000000',
-  YOUTUBE: '#FF0000',
-  TIKTOK: '#111111',
+export const platformColors: Record<SocialPlatform, string> = {
+  [SOCIAL_PLATFORMS.FACEBOOK]: '#1877F2',
+  [SOCIAL_PLATFORMS.INSTAGRAM]: '#E1306C',
+  [SOCIAL_PLATFORMS.TWITTER]: '#1DA1F2',
+  [SOCIAL_PLATFORMS.YOUTUBE]: '#FF0000',
+  [SOCIAL_PLATFORMS.THREADS]: '#000000',
+  [SOCIAL_PLATFORMS.LINKEDIN]: '#0A66C2',
 };
 export 
 const normalizeValue = (value: string) =>
