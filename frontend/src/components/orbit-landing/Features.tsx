@@ -152,14 +152,14 @@ export default function Features() {
                             <div className="mt-6 flex-1 space-y-2.5">
                                 {(
                                     [
-                                        { k: "instagram", f: "Feed post", on: true },
-                                        { k: "x", f: "Thread · 4 posts", on: true },
+                                        { k: "Instagram", f: "Feed post", on: true },
+                                        { k: "X", f: "Thread · 4 posts", on: true },
                                         { k: "linkedin", f: "Article", on: false },
                                     ] as { k: PlatformKey; f: string; on: boolean }[]
                                 ).map((p) => {
-                                    const mono = p.k === "x" || p.k === "tiktok";
+                                    const mono = p.k === "X" || p.k === "tiktok";
                                     const color =
-                                        p.k === "instagram" ? "#E1306C" : p.k === "facebook" ? "#1877F2" : p.k === "linkedin" ? "#0A66C2" : p.k === "youtube" ? "#FF0000" : "";
+                                        p.k === "Instagram" ? "#E1306C" : p.k === "facebook" ? "#1877F2" : p.k === "linkedin" ? "#0A66C2" : p.k === "Youtube" ? "#FF0000" : "";
                                     return (
                                         <div
                                             key={p.k}
@@ -179,7 +179,7 @@ export default function Features() {
                                                 <PlatformIcon platform={p.k} className="size-3.5" />
                                             </span>
                                             <div className="min-w-0">
-                                                <p className="text-sm font-medium capitalize">{p.k === "x" ? "X" : p.k}</p>
+                                                <p className="text-sm font-medium capitalize">{p.k === "X" ? "X" : p.k}</p>
                                                 <p className="text-[11px] text-orbit-muted-foreground">{p.f}</p>
                                             </div>
                                             <span
@@ -339,14 +339,14 @@ export default function Features() {
                                         desc="Manage all your social accounts from a single workspace."
                                     />
                                     <div className="mt-5 flex -space-x-2">
-                                        {(["instagram", "x", "linkedin", "tiktok"] as PlatformKey[]).map(
+                                        {(["Instagram", "X", "linkedin", "tiktok"] as PlatformKey[]).map(
                                             (k) => (
                                                 <span
                                                     key={k}
                                                     className="grid size-9 place-items-center rounded-full border-2 border-orbit-card bg-orbit-background"
                                                     style={{
                                                         color:
-                                                            k === "instagram" ? "#E1306C" : k === "linkedin" ? "#0A66C2" : "hsl(var(--orb-foreground))",
+                                                            k === "Instagram" ? "#E1306C" : k === "linkedin" ? "#0A66C2" : "hsl(var(--orb-foreground))",
                                                     }}
                                                 >
                                                     <PlatformIcon platform={k} className="size-4" />

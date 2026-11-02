@@ -42,7 +42,7 @@ const content: Record<
     title: "Social accounts",
     description: "Manage the social channels connected to your workspace.",
     icon: Link2,
-    items: ["Instagram", "LinkedIn", "X", "Facebook", "YouTube"],
+    items: ["Instagram", "linkedin", "X", "facebook", "Youtube"],
   },
   "/team": {
     title: "Team & approvals",

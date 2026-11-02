@@ -21,26 +21,26 @@ import { PlatformIcon, type PlatformKey } from "./Platforms";
 import { EASE } from "./Reveal";
 
 const PLATFORM_COLOR: Record<PlatformKey, string> = {
-    instagram: "#E1306C",
+    Instagram: "#E1306C",
     facebook: "#1877F2",
     linkedin: "#0A66C2",
-    x: "#0F1419",
+    X: "#0F1419",
     tiktok: "#0F1419",
-    youtube: "#FF0000",
+    Youtube: "#FF0000",
 };
 
 const BARS = [42, 66, 50, 80, 58, 88, 70, 52, 84, 64, 96, 76];
 
 const WEEK = [
-    { d: "Mon", n: 19, dots: ["instagram", "youtube"] as PlatformKey[] },
+    { d: "Mon", n: 19, dots: ["Instagram", "Youtube"] as PlatformKey[] },
     { d: "Tue", n: 20, dots: ["linkedin"] as PlatformKey[], time: "10:30" },
-    { d: "Wed", n: 21, dots: ["x", "tiktok"] as PlatformKey[] },
+    { d: "Wed", n: 21, dots: ["X", "tiktok"] as PlatformKey[] },
     { d: "Thu", n: 22, dots: [] as PlatformKey[] },
-    { d: "Fri", n: 23, dots: ["instagram"] as PlatformKey[] },
+    { d: "Fri", n: 23, dots: ["Instagram"] as PlatformKey[] },
 ];
 
 function PlatformDot({ k }: { k: PlatformKey }) {
-    const mono = k === "x" || k === "tiktok";
+    const mono = k === "X" || k === "tiktok";
     return (
         <span
             className="grid size-4 place-items-center rounded-[4px]"

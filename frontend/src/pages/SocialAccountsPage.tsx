@@ -8,10 +8,10 @@ import type { AccountPlatform } from '../queries/account';
 
 // Only platforms accepted by both the AccountPlatform enum and the connectAccount resolver.
 const platforms: { value: AccountPlatform; label: string; icon: typeof Plug }[] = [
-  { value: 'facebook', label: 'Facebook', icon: Facebook },
-  { value: 'instagram', label: 'Instagram', icon: Instagram },
-  { value: 'linkedin', label: 'LinkedIn', icon: Linkedin },
-  { value: 'youtube', label: 'YouTube', icon: Youtube }
+  { value: 'facebook', label: 'facebook', icon: Facebook },
+  { value: 'Instagram', label: 'Instagram', icon: Instagram },
+  { value: 'linkedin', label: 'linkedin', icon: Linkedin },
+  { value: 'Youtube', label: 'Youtube', icon: Youtube }
 ];
 const platformMeta = Object.fromEntries(platforms.map((p) => [p.value, p])) as Record<AccountPlatform, (typeof platforms)[number]>;
 

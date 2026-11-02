@@ -1,4 +1,4 @@
-export type AccountPlatform = 'facebook' | 'instagram' | 'linkedin' | 'youtube';
+export type AccountPlatform = 'facebook' | 'Instagram' | 'linkedin' | 'Youtube';
 
 export type SocialAccount = {
   accountId: string;

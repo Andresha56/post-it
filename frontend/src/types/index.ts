@@ -13,10 +13,10 @@ export type PostStatus = z.infer<typeof postStatusSchema>;
 
 export const socialPlatformSchema = z.enum([
   "Instagram",
-  "LinkedIn",
+  "linkedin",
   "X",
-  "Facebook",
-  "YouTube",
+  "facebook",
+  "Youtube",
 ]);
 export type SocialPlatform = z.infer<typeof socialPlatformSchema>;
 
@@ -63,9 +63,9 @@ export const createPostSchema = z.object({
     .max(500, "Caption cannot exceed 500 characters."),
 
   platforms: z.array(z.enum([
-    Platform.Facebook,
+    Platform.facebook,
     Platform.Instagram,
-    Platform.LinkedIn,
+    Platform.linkedin,
     Platform.TikTok,
     Platform.X
   ])),

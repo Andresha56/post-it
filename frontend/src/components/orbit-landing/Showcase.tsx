@@ -19,16 +19,16 @@ interface Post {
 }
 
 const POSTS: Post[] = [
-    { id: 1, day: 2, platform: "instagram", title: "Launch teaser", time: "10:30", status: "published" },
+    { id: 1, day: 2, platform: "Instagram", title: "Launch teaser", time: "10:30", status: "published" },
     { id: 2, day: 4, platform: "linkedin", title: "Founder story", time: "09:00", status: "published" },
-    { id: 3, day: 9, platform: "x", title: "Weekly tips thread", time: "12:00", status: "scheduled" },
+    { id: 3, day: 9, platform: "X", title: "Weekly tips thread", time: "12:00", status: "scheduled" },
     { id: 4, day: 11, platform: "tiktok", title: "Behind the scenes", time: "17:30", status: "scheduled" },
-    { id: 5, day: 16, platform: "instagram", title: "Carousel · 5 slides", time: "11:00", status: "scheduled" },
-    { id: 6, day: 18, platform: "youtube", title: "Tutorial premiere", time: "15:00", status: "scheduled" },
+    { id: 5, day: 16, platform: "Instagram", title: "Carousel · 5 slides", time: "11:00", status: "scheduled" },
+    { id: 6, day: 18, platform: "Youtube", title: "Tutorial premiere", time: "15:00", status: "scheduled" },
     { id: 7, day: 21, platform: "linkedin", title: "Case study", time: "08:30", status: "draft" },
     { id: 8, day: 23, platform: "facebook", title: "Community Q&A", time: "13:00", status: "draft" },
-    { id: 9, day: 26, platform: "instagram", title: "Reel · month recap", time: "18:00", status: "scheduled" },
-    { id: 10, day: 28, platform: "x", title: "Feature announcement", time: "10:00", status: "draft" },
+    { id: 9, day: 26, platform: "Instagram", title: "Reel · month recap", time: "18:00", status: "scheduled" },
+    { id: 10, day: 28, platform: "X", title: "Feature announcement", time: "10:00", status: "draft" },
 ];
 
 const STATUS_STYLE: Record<Status, string> = {
@@ -38,15 +38,15 @@ const STATUS_STYLE: Record<Status, string> = {
 };
 
 const PLATFORM_COLOR: Record<PlatformKey, string> = {
-    instagram: "#E1306C",
+    Instagram: "#E1306C",
     facebook: "#1877F2",
     linkedin: "#0A66C2",
-    x: "#0F1419",
+    X: "#0F1419",
     tiktok: "#0F1419",
-    youtube: "#FF0000",
+    Youtube: "#FF0000",
 };
 
-const FILTERS: ("all" | PlatformKey)[] = ["all", "instagram", "linkedin", "x", "tiktok"];
+const FILTERS: ("all" | PlatformKey)[] = ["all", "Instagram", "linkedin", "X", "tiktok"];
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const CELLS = [
@@ -141,9 +141,9 @@ export default function Showcase() {
                                     Connected
                                 </p>
                                 <div className="mt-2 space-y-1.5">
-                                    {(["instagram", "linkedin", "x"] as PlatformKey[]).map((k) => (
+                                    {(["Instagram", "linkedin", "x"] as PlatformKey[]).map((k) => (
                                         <div key={k} className="flex items-center gap-2 text-[11px] text-orbit-muted-foreground">
-                                            <span style={{ color: k === "x" ? "hsl(var(--orb-foreground))" : PLATFORM_COLOR[k] }}>
+                                            <span style={{ color: k === "X" ? "hsl(var(--orb-foreground))" : PLATFORM_COLOR[k] }}>
                                                 <PlatformIcon platform={k} className="size-3" />
                                             </span>
                                             @{k}.orbit
@@ -217,7 +217,7 @@ export default function Showcase() {
                                                         <span className="text-[10px] text-orbit-muted-foreground">{d}</span>
                                                         <div className="mt-1 space-y-1">
                                                             {postsByDay(d).map((p) => {
-                                                                const mono = p.platform === "x" || p.platform === "tiktok";
+                                                                const mono = p.platform === "X" || p.platform === "tiktok";
                                                                 const color = mono ? "hsl(var(--orb-foreground))" : PLATFORM_COLOR[p.platform];
                                                                 return (
                                                                     <button
@@ -332,7 +332,7 @@ export default function Showcase() {
                                                 <span
                                                     style={{
                                                         color:
-                                                            selected.platform === "x" || selected.platform === "tiktok"
+                                                            selected.platform === "X" || selected.platform === "tiktok"
                                                                 ? "hsl(var(--orb-foreground))"
                                                                 : PLATFORM_COLOR[selected.platform],
                                                     }}

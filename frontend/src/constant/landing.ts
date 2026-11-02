@@ -1,5 +1,5 @@
 import { CalendarDays, ChartNoAxesCombined, Instagram, Layers, Link2, Sparkles, Users } from 'lucide-react';
-import { FacebookIcon, LinkedInIcon, TikTokIcon, XIcon } from '../components/ui/BrandIcons';
+import { facebookIcon, LinkedInIcon, TikTokIcon, XIcon } from '../components/ui/BrandIcons';
 import mainDark from '../assets/landing/main-dark.png';
 import mainLight from '../assets/landing/main-light.png';
 import calendarDark from '../assets/landing/calendar-dark.png';
@@ -51,10 +51,10 @@ export const INTEGRATIONS_HEADING = 'All your channels. Finally together.';
 
 export const INTEGRATIONS: IntegrationItem[] = [
   { platform: Platform.Instagram, icon: Instagram, iconSize: 26 },
-  { platform: Platform.LinkedIn, icon: LinkedInIcon, iconSize: 24 },
+  { platform: Platform.linkedin, icon: LinkedInIcon, iconSize: 24 },
   { platform: Platform.TikTok, icon: TikTokIcon, iconSize: 20 },
   { platform: Platform.X, icon: XIcon, iconSize: 18 },
-  { platform: Platform.Facebook, icon: FacebookIcon, iconSize: 22 }
+  { platform: Platform.facebook, icon: facebookIcon, iconSize: 22 }
 ];
 
 export const FEATURES_SECTION = {

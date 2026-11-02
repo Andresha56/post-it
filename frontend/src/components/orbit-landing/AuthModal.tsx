@@ -398,10 +398,6 @@ export default function AuthModal({
                             </button>
                         </form>
                     )}
-
-                    <p className="orbit-font-mono mt-5 text-center text-[10px] uppercase tracking-wider text-orbit-muted-foreground">
-                        Secured with AWS Cognito — email &amp; password only
-                    </p>
                 </Dialog.Content>
             </Dialog.Portal>
         </Dialog.Root>

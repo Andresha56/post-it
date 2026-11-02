@@ -1,20 +1,20 @@
-import { InstagramIcon, FacebookIcon, LinkedInIcon, XIcon, TikTokIcon, YouTubeIcon } from "./icons";
+import { InstagramIcon, facebookIcon, LinkedInIcon, XIcon, TikTokIcon, YoutubeIcon } from "./icons";
 
 export type PlatformKey =
-    | "instagram"
+    | "Instagram"
     | "facebook"
     | "linkedin"
-    | "x"
+    | "X"
     | "tiktok"
-    | "youtube";
+    | "Youtube";
 
 export const PLATFORMS: { key: PlatformKey; name: string; color: string; mono: boolean }[] = [
-    { key: "instagram", name: "Instagram", color: "#E1306C", mono: false },
-    { key: "facebook", name: "Facebook", color: "#1877F2", mono: false },
-    { key: "linkedin", name: "LinkedIn", color: "#0A66C2", mono: false },
-    { key: "x", name: "X", color: "#0F1419", mono: true },
+    { key: "Instagram", name: "Instagram", color: "#E1306C", mono: false },
+    { key: "facebook", name: "facebook", color: "#1877F2", mono: false },
+    { key: "linkedin", name: "linkedin", color: "#0A66C2", mono: false },
+    { key: "X", name: "X", color: "#0F1419", mono: true },
     { key: "tiktok", name: "TikTok", color: "#0F1419", mono: true },
-    { key: "youtube", name: "YouTube", color: "#FF0000", mono: false },
+    { key: "Youtube", name: "Youtube", color: "#FF0000", mono: false },
 ];
 
 export function PlatformIcon({
@@ -26,18 +26,18 @@ export function PlatformIcon({
 }) {
     const cls = className ?? "size-4";
     switch (platform) {
-        case "instagram":
+        case "Instagram":
             return <InstagramIcon className={cls} />;
         case "facebook":
-            return <FacebookIcon className={cls} />;
+            return <facebookIcon className={cls} />;
         case "linkedin":
             return <LinkedInIcon className={cls} />;
-        case "x":
+        case "X":
             return <XIcon className={cls} />;
         case "tiktok":
             return <TikTokIcon className={cls} />;
-        case "youtube":
-            return <YouTubeIcon className={cls} />;
+        case "Youtube":
+            return <YoutubeIcon className={cls} />;
     }
 }
 
