@@ -85,9 +85,12 @@ function CalendarEventItem({ event }: { event: CalendarEvent }) {
 export function ContentCalendar({
   posts,
   onCreate,
+  onSelectPost,
 }: {
   posts: Post[];
   onCreate: () => void;
+  // Opens the post's view / edit / delete actions; without it a summary is shown.
+  onSelectPost?: (id: string) => void;
 }) {
   const [view, setView] = useState<View>('month');
   const [date, setDate] = useState(new Date());
@@ -199,6 +202,7 @@ export function ContentCalendar({
               event: CalendarEventItem,
             }}
             onSelectEvent={(event) => {
+              if (onSelectPost) return onSelectPost(event.resource.id);
               window.alert(
                 `${event.title}\nStatus: ${event.resource.status}\nPlatforms: ${event.resource.platforms?.join(', ') || 'None'}`,
               );

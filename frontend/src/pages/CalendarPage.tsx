@@ -8,9 +8,11 @@ import { graphqlRequest } from "../lib/graphqlClient";
 import type { ContentListData } from "../constant/content";
 import { toCalendarPost } from "../constant/content";
 import { GET_CONTENTS } from "../queries/content";
+import { usePostActions } from "../hooks/usePostActions";
 
 export function CalendarPage() {
   const navigate = useNavigate();
+  const actions = usePostActions();
   const { data = [], isLoading } = useQuery({
     queryKey: ["posts"],
    queryFn: async () => {
@@ -50,8 +52,10 @@ export function CalendarPage() {
         <ContentCalendar
           posts={data.map(toCalendarPost)}
           onCreate={() => navigate("/create")}
+          onSelectPost={actions.view}
         />
       )}
+      {actions.dialogs}
     </div>
   );
 }

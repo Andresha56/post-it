@@ -1,7 +1,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate, useOutletContext } from 'react-router-dom';
-import { Plus, Search } from 'lucide-react';
+import { Eye, Pencil, Plus, Search, Trash2 } from 'lucide-react';
 
 import { graphqlRequest } from '../lib/graphqlClient';
 import { GET_CONTENTS } from '../queries/content';
@@ -10,6 +10,7 @@ import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { StatusBadge } from '../components/ui/StatusBadge';
 import { DISPLAY_STATUS, type ContentListData, type ContentRecord } from '../constant/content';
+import { usePostActions } from '../hooks/usePostActions';
 
 const formatScheduledAt = (value: string | null) => {
   if (!value) return '—';
@@ -36,6 +37,7 @@ const matchesSearch = (post: ContentRecord, search: string) => {
 export function ContentPage() {
   const navigate = useNavigate();
   const { search } = useOutletContext<{ search: string }>();
+  const actions = usePostActions();
 
   const {
     data: posts = [],
@@ -88,13 +90,14 @@ export function ContentPage() {
                 <th className="px-5 py-3">Type</th>
                 <th className="px-5 py-3">Status</th>
                 <th className="px-5 py-3">Schedule</th>
+                <th className="px-5 py-3 text-right">Actions</th>
               </tr>
             </thead>
 
             <tbody className="divide-y divide-[var(--border)]">
               {isLoading && (
                 <tr>
-                  <td colSpan={4} className="p-6 text-[var(--text-muted)]">
+                  <td colSpan={5} className="p-6 text-[var(--text-muted)]">
                     Loading posts…
                   </td>
                 </tr>
@@ -102,7 +105,7 @@ export function ContentPage() {
 
               {isError && (
                 <tr>
-                  <td colSpan={4} role="alert" className="p-6 text-red-600">
+                  <td colSpan={5} role="alert" className="p-6 text-red-600">
                     {error instanceof Error
                       ? error.message
                       : 'Could not load posts.'}
@@ -162,6 +165,44 @@ export function ContentPage() {
                     <td className="px-5 py-4 text-[var(--text-muted)]">
                       {formatScheduledAt(post.scheduledAt)}
                     </td>
+
+                    <td className="px-5 py-4">
+                      <div className="flex justify-end gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="size-8"
+                          aria-label={`View ${getPostTitle(post)}`}
+                          title="View"
+                          onClick={() => actions.view(post.id)}
+                          data-testid={`post-view-button-${post.id}`}
+                        >
+                          <Eye size={15} />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="size-8"
+                          aria-label={`Edit ${getPostTitle(post)}`}
+                          title="Edit"
+                          onClick={() => actions.edit(post.id)}
+                          data-testid={`post-edit-button-${post.id}`}
+                        >
+                          <Pencil size={15} />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="size-8 hover:text-red-600"
+                          aria-label={`Delete ${getPostTitle(post)}`}
+                          title="Delete"
+                          onClick={() => actions.remove(post.id)}
+                          data-testid={`post-delete-button-${post.id}`}
+                        >
+                          <Trash2 size={15} />
+                        </Button>
+                      </div>
+                    </td>
                   </tr>
                 ))}
             </tbody>
@@ -175,6 +216,7 @@ export function ContentPage() {
           </p>
         )}
       </Card>
+      {actions.dialogs}
     </div>
   );
 }

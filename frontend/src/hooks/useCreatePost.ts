@@ -7,8 +7,8 @@ import toast from 'react-hot-toast';
 import { graphqlRequest } from '../lib/graphqlClient';
 import { type CreatePostType } from '../types';
 import type { PostMedia } from '../types/content';
-import { CREATE_CONTENT, CREATE_UPLOAD_URL } from '../queries/content';
-import { Status, type ContentStatus } from '../constant/content.js';
+import { CREATE_CONTENT, CREATE_UPLOAD_URL, UPDATE_CONTENT } from '../queries/content';
+import { Status, type ContentMutationResult, type ContentStatus } from '../constant/content.js';
 
 type UploadData = {
   createUploadUrl: {
@@ -28,6 +28,33 @@ type CreateData = {
     } | null;
   };
 };
+
+// Upload a file to S3 through a presigned URL and return its object key.
+async function uploadMediaFile(file: File) {
+  const data = await graphqlRequest<UploadData>(CREATE_UPLOAD_URL, {
+    input: {
+      contentType: file.type,
+      fileSize: file.size,
+    },
+  });
+
+  const { uploadUrl, key } = data.createUploadUrl;
+
+  await axios.put(uploadUrl, file, {
+    headers: {
+      'Content-Type': file.type,
+    },
+  });
+
+  return key;
+}
+
+const parseHashtags = (value?: string) =>
+  value
+    ?.split(/[\s,]+/)
+    .map((tag) => tag.trim())
+    .filter(Boolean)
+    .map((tag) => (tag.startsWith('#') ? tag : `#${tag}`));
 
 type SavePostVariables = {
   values: CreatePostType;
@@ -57,22 +84,7 @@ export function useCreatePost() {
       // 1. Upload media to S3 if a file is selected. A failure here rejects
       //    before the post is created, so nothing is published without it.
       if (file) {
-        const data = await graphqlRequest<UploadData>(CREATE_UPLOAD_URL, {
-          input: {
-            contentType: file.type,
-            fileSize: file.size,
-          },
-        });
-
-        const { uploadUrl, key } = data.createUploadUrl;
-
-        await axios.put(uploadUrl, file, {
-          headers: {
-            'Content-Type': file.type,
-          },
-        });
-
-        uploadedKeys.push(key);
+        uploadedKeys.push(await uploadMediaFile(file));
       }
 
       // 2. Create the post after the media upload succeeds. Platforms are
@@ -93,11 +105,7 @@ export function useCreatePost() {
             }
           : {}),
         mediaUrls: uploadedKeys,
-        hashtags: values.hashtags
-          ?.split(/[\s,]+/)
-          .map((tag) => tag.trim())
-          .filter(Boolean)
-          .map((tag) => (tag.startsWith('#') ? tag : `#${tag}`)),
+        hashtags: parseHashtags(values.hashtags),
       };
       const result = await graphqlRequest<CreateData>(CREATE_CONTENT, {
         input,
@@ -157,4 +165,88 @@ export function useCreatePost() {
     isSubmitting: mutation.isPending,
     OnSave,
   };
+}
+
+/**
+ * Saves an edited post. New media goes through the same S3 upload as creation;
+ * unchanged media keeps its stored key, and removed media sends no keys.
+ * Success is only reported when the backend confirms it (for scheduled and
+ * published posts that means Zernio accepted the change).
+ */
+export function useUpdatePost(id: string | undefined) {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: async ({ values, media }: SavePostVariables) => {
+      if (!id) throw new Error('No post selected.');
+
+      const mediaKeys = media?.file
+        ? [await uploadMediaFile(media.file)]
+        : media?.key
+          ? [media.key]
+          : [];
+
+      const input = {
+        title: values.title,
+        caption: values.caption,
+        contentType: mediaKeys.length
+          ? media?.kind === 'video'
+            ? 'VIDEO'
+            : 'IMAGE'
+          : 'TEXT',
+        mediaUrls: mediaKeys,
+        hashtags: parseHashtags(values.hashtags) ?? [],
+        ...(values.scheduledAt
+          ? { scheduledAt: new Date(values.scheduledAt).toISOString() }
+          : {}),
+      };
+
+      const result = (
+        await graphqlRequest<{ updateContent: ContentMutationResult }>(UPDATE_CONTENT, { id, input })
+      ).updateContent;
+
+      if (!result.success) throw new Error(result.message || 'Post was not updated.');
+
+      return result;
+    },
+
+    onSuccess: (data) => {
+      const notApplied = (data.results ?? []).some((result) =>
+        ['failed', 'unsupported'].includes(result.status),
+      );
+
+      if (notApplied) {
+        toast(data.message, { duration: 7000 });
+      } else {
+        toast.success(data.message || 'Post updated');
+      }
+
+      navigate('/content');
+    },
+
+    onError: (err) => {
+      toast.error(err instanceof Error ? err.message : 'Could not update post.');
+    },
+
+    // Refresh even after a failure: a partial outcome may have changed the stored post.
+    onSettled: () =>
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['posts'] }),
+        queryClient.invalidateQueries({ queryKey: ['post', id] }),
+      ]),
+  });
+
+  const OnUpdate = useCallback(
+    async (values: CreatePostType, media: PostMedia | null) => {
+      try {
+        await mutation.mutateAsync({ values, media });
+      } catch {
+        // The onError callback handles the error toast.
+      }
+    },
+    [mutation.mutateAsync],
+  );
+
+  return { isSubmitting: mutation.isPending, OnUpdate };
 }

@@ -56,6 +56,54 @@ async function cancelZernioPost(zernioPostId) {
     await zernio.posts.deletePost({ path: { postId: zernioPostId } });
 }
 
+// PUT /v1/posts/{id} — only valid before the post is published. Fields that
+// are omitted (e.g. mediaItems when the media did not change) are kept by Zernio.
+async function updateScheduledPost({
+    zernioPostId,
+    title,
+    caption,
+    hashtags = [],
+    mediaItems,
+    scheduledFor,
+}) {
+    const body = {
+        content: caption,
+        hashtags,
+        scheduledFor: new Date(scheduledFor).toISOString(),
+    };
+
+    if (title) body.title = title;
+    if (mediaItems) body.mediaItems = mediaItems;
+
+    const { data } = await zernio.posts.updatePost({
+        path: { postId: zernioPostId },
+        body,
+    });
+
+    return data;
+}
+
+// POST /v1/posts/{id}/edit — changes the text of one account's published copy.
+async function editPublishedPost({ zernioPostId, platform, accountId, content }) {
+    const { data } = await zernio.posts.editPost({
+        path: { postId: zernioPostId },
+        body: { platform, accountId, content },
+    });
+
+    return data;
+}
+
+// POST /v1/posts/{id}/unpublish — deletes one account's published copy from
+// the social platform.
+async function unpublishFromAccount({ zernioPostId, platform, accountId }) {
+    const { data } = await zernio.posts.unpublishPost({
+        path: { postId: zernioPostId },
+        body: { platform, accountId },
+    });
+
+    return data;
+}
+
 /**
  * Cancel every scheduled post that targets the given account, for the whole
  * post rather than just that account: no selected account receives the post.
@@ -187,6 +235,9 @@ async function revalidateScheduledPosts({ sub, posts, reason }) {
 module.exports = {
     submitPost,
     cancelZernioPost,
+    updateScheduledPost,
+    editPublishedPost,
+    unpublishFromAccount,
     cancelScheduledPostsForAccount,
     revalidateScheduledPosts,
 };

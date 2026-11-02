@@ -1,6 +1,6 @@
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { CalendarClock, Save, Send } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -14,14 +14,30 @@ import {
 import { inputClass, labelClass } from "../components/ui/Input";
 import { PageHeading } from "../components/layout/AppLayout";
 import { CaptionEditor } from "../components/post/CaptionEditor";
-import { MediaPicker } from "../components/post/MediaPicker";
+import { MediaPicker, MediaPreview } from "../components/post/MediaPicker";
+import { PostAccountsList } from "../components/post/PostAccountsList";
 import { AccountSelector } from "../components/post/AccountSelector";
-import { Status } from "../constant/content";
+import {
+  EDITABLE_PLATFORMS,
+  Status,
+  parseContentDate,
+} from "../constant/content";
+import { PLATFORM_LABELS } from "../constant/socialPlatforms";
+import { usePost, usePostAccounts } from "../hooks/usePost";
 import { useConnectedAccounts } from "../hooks/useSocialAccounts";
-import { useCreatePost } from "../hooks/useCreatePost";
+import { useCreatePost, useUpdatePost } from "../hooks/useCreatePost";
 import { createPostSchema, type CreatePostType } from "../types";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { PostMedia } from "../types/content";
+
+// Value for a datetime-local input, in the user's local time.
+const toLocalInput = (value: string | null | undefined) => {
+  const date = parseContentDate(value);
+  if (!date) return "";
+  return new Date(date.getTime() - date.getTimezoneOffset() * 60_000)
+    .toISOString()
+    .slice(0, 16);
+};
 
 type PublishIntent =
   | typeof Status.DRAFT
@@ -31,13 +47,27 @@ type PublishIntent =
 export function CreatePostPage() {
   const navigate = useNavigate();
   const [media, setMedia] = useState<PostMedia | null>(null);
-  const { isSubmitting, OnSave } = useCreatePost();
+  const { isSubmitting: isCreating, OnSave } = useCreatePost();
   const accounts = useConnectedAccounts();
+
+  // Edit mode (/content/:id/edit) reuses this form for an existing post.
+  const { id: editId } = useParams();
+  const isEdit = Boolean(editId);
+  const existing = usePost(editId);
+  const post = existing.data;
+  const postAccounts = usePostAccounts(post);
+  const { isSubmitting: isUpdating, OnUpdate } = useUpdatePost(editId);
+  const isSubmitting = isCreating || isUpdating;
+  const isPublished = post?.status === Status.PUBLISHED;
+  const isScheduled = post?.status === Status.SCHEDULED;
+  const isPublishing = post?.status === Status.PUBLISHING;
+  const loadedId = useRef<string | null>(null);
 
   const {
     control,
     handleSubmit,
     watch,
+    reset,
     formState: { errors },
   } = useForm<CreatePostType>({
     resolver: zodResolver(createPostSchema),
@@ -50,6 +80,48 @@ export function CreatePostPage() {
       status: Status.DRAFT,
       mediaUrls: [],
     },
+  });
+
+  // Fill the form once per post, so a background refetch never overwrites edits.
+  useEffect(() => {
+    if (!post || loadedId.current === post.id) return;
+    loadedId.current = post.id;
+    reset({
+      title: post.title ?? "",
+      caption: post.caption,
+      accountIds: post.accountIds ?? [],
+      scheduledAt: toLocalInput(post.scheduledAt),
+      hashtags: (post.hashtags ?? []).join(" "),
+      status: Status.DRAFT,
+      mediaUrls: [],
+    });
+    const key = post.mediaUrls?.[0];
+    setMedia(
+      key
+        ? {
+            kind: post.contentType === "VIDEO" ? "video" : "image",
+            url: post.mediaPreviewUrls?.[0] ?? null,
+            name: key.split("/").pop() ?? "Attachment",
+            key,
+          }
+        : null,
+    );
+  }, [post, reset]);
+
+  const saveEdit = handleSubmit(async (values) => {
+    if (
+      isScheduled &&
+      (!values.scheduledAt ||
+        new Date(values.scheduledAt).getTime() <= Date.now())
+    ) {
+      toast.error("Choose a date and time in the future.");
+      return;
+    }
+
+    await OnUpdate(
+      { ...values, scheduledAt: isScheduled ? values.scheduledAt : "" },
+      media,
+    );
   });
 
   const scheduledAt = watch("scheduledAt");
@@ -86,14 +158,58 @@ export function CreatePostPage() {
   const disableActions = isSubmitting || accounts.isPending;
   const disablePublishing = disableActions || !hasConnectedAccounts;
 
+  if (isEdit && !post) {
+    return (
+      <div className="mx-auto max-w-5xl">
+        <PageHeading title="Edit post" />
+        {existing.isError ? (
+          <div role="alert" className="text-sm text-red-600">
+            {existing.error instanceof Error
+              ? existing.error.message
+              : "Could not load the post."}
+            <Button
+              variant="secondary"
+              className="ml-3"
+              onClick={() => navigate("/content")}
+            >
+              Back to content
+            </Button>
+          </div>
+        ) : (
+          <p className="text-sm text-[var(--text-muted)]">Loading post…</p>
+        )}
+      </div>
+    );
+  }
+
+  // Platforms where a published caption edit can be pushed through Zernio.
+  const publishedPlatforms = [
+    ...new Set(
+      postAccounts
+        .filter((account) => account.result?.status === "published")
+        .map((account) => account.platform)
+        .filter((platform) => platform !== null),
+    ),
+  ];
+  const editable = publishedPlatforms.filter((platform) =>
+    EDITABLE_PLATFORMS.includes(platform),
+  );
+  const notEditable = publishedPlatforms.filter(
+    (platform) => !EDITABLE_PLATFORMS.includes(platform),
+  );
+
   return (
     <div className="mx-auto max-w-5xl">
       <PageHeading
-        title="Create a post"
-        description="Create content and choose where and when to publish it."
+        title={isEdit ? "Edit post" : "Create a post"}
+        description={
+          isEdit
+            ? "Update this post. Scheduled posts are updated with Zernio before they go out."
+            : "Create content and choose where and when to publish it."
+        }
       />
 
-      <form onSubmit={submitWith(Status.DRAFT)} noValidate>
+      <form onSubmit={isEdit ? saveEdit : submitWith(Status.DRAFT)} noValidate>
         <fieldset disabled={isSubmitting} className="min-w-0 border-0 p-0">
           <div className="grid gap-4 lg:grid-cols-[minmax(0,1.3fr)_minmax(280px,0.7fr)]">
             <Card>
@@ -179,10 +295,40 @@ export function CreatePostPage() {
                   )}
                 </label>
 
+                {isPublished && (
+                  <p
+                    className="rounded-lg bg-[var(--surface-muted)] px-3 py-2 text-xs text-[var(--text-muted)]"
+                    data-testid="published-edit-note"
+                  >
+                    This post is already published. Caption changes are pushed to{" "}
+                    {editable.length
+                      ? editable.map((platform) => PLATFORM_LABELS[platform]).join(", ")
+                      : "no platform"}
+                    {notEditable.length
+                      ? `; ${notEditable.map((platform) => PLATFORM_LABELS[platform]).join(", ")} ${notEditable.length === 1 ? "doesn't" : "don't"} allow editing published posts`
+                      : ""}
+                    . Media and the publish time can't be changed after publishing.
+                  </p>
+                )}
+
+                {isPublishing && (
+                  <p role="alert" className="rounded-lg bg-[var(--surface-muted)] px-3 py-2 text-xs text-[var(--text-muted)]">
+                    This post is being published right now. You can edit it once publishing finishes.
+                  </p>
+                )}
+
                 <div>
                   <p className={`${labelClass} mb-2`}>Media</p>
 
-                  <MediaPicker media={media} onChange={setMedia} />
+                  {isPublished ? (
+                    media ? (
+                      <MediaPreview media={media} className="max-h-64" />
+                    ) : (
+                      <p className="text-sm text-[var(--text-muted)]">No media.</p>
+                    )
+                  ) : (
+                    <MediaPicker media={media} onChange={setMedia} />
+                  )}
 
                   {errors?.mediaUrls && (
                     <p role="alert" className="mt-1 text-sm text-red-600">
@@ -210,6 +356,18 @@ export function CreatePostPage() {
                   >
                     Cancel
                   </Button>
+
+                  {isEdit ? (
+                    <Button
+                      type="submit"
+                      disabled={isSubmitting || isPublishing}
+                      data-testid="save-post-changes-button"
+                    >
+                      <Save size={15} />
+                      {isUpdating ? "Saving…" : "Save changes"}
+                    </Button>
+                  ) : (
+                  <>
 
                   <Button
                     type="button"
@@ -242,6 +400,8 @@ export function CreatePostPage() {
                     <Send size={15} />
                     Publish now
                   </Button>
+                  </>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -255,6 +415,15 @@ export function CreatePostPage() {
                 <CardContent className="space-y-4 pt-3">
                   <div className={labelClass}>
                     <p>Accounts</p>
+                    {isEdit ? (
+                      <>
+                        <span className="mb-2 block text-xs font-normal text-[var(--text-muted)]">
+                          The accounts can't be changed after a post is created.
+                        </span>
+                        <PostAccountsList accounts={postAccounts} />
+                      </>
+                    ) : (
+                    <>
                     <span className="block text-xs font-normal text-[var(--text-muted)]">
                       Select one or more connected accounts. The same post goes
                       to every account you pick.
@@ -288,6 +457,8 @@ export function CreatePostPage() {
                         {errors.accountIds.message}
                       </span>
                     )}
+                    </>
+                    )}
                   </div>
 
                   <label className={labelClass}>
@@ -300,6 +471,7 @@ export function CreatePostPage() {
                           {...field}
                           type="datetime-local"
                           data-testid="scheduled-at-input"
+                          disabled={isEdit && !isScheduled}
                           min={new Date(
                             Date.now() -
                               new Date().getTimezoneOffset() * 60_000,
@@ -311,7 +483,11 @@ export function CreatePostPage() {
                       )}
                     />
                     <span className="mt-1 block text-xs font-normal text-[var(--text-muted)]">
-                      Needed only when you schedule the post.
+                      {isEdit && !isScheduled
+                        ? "Only a scheduled post's publish time can be changed."
+                        : isEdit
+                          ? "Changing it reschedules the post with Zernio."
+                          : "Needed only when you schedule the post."}
                     </span>
                     {errors.scheduledAt && (
                       <span
@@ -326,6 +502,7 @@ export function CreatePostPage() {
                   <p
                     className="text-xs font-normal text-[var(--text-muted)]"
                     data-testid="selected-accounts-count"
+                    hidden={isEdit}
                   >
                     {selectedAccountIds.length} account
                     {selectedAccountIds.length === 1 ? "" : "s"} selected
