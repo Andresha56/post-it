@@ -1,4 +1,5 @@
 const { gql } = require("graphql-tag");
+const { CONTENT_STATUS_LIST } = require("../constants/contentStatus");
 
 const contentTypeDefs = gql`
   enum ContentType {
@@ -9,10 +10,16 @@ const contentTypeDefs = gql`
   }
 
   enum ContentStatus {
-    DRAFT
-    SCHEDULED
-    PUBLISHED
-    FAILED
+    ${CONTENT_STATUS_LIST.join("\n    ")}
+  }
+
+  type AccountResult {
+    accountId: ID!
+    platform: AccountPlatform!
+    status: String!
+    platformPostId: String
+    platformPostUrl: String
+    error: String
   }
 
   type Content {
@@ -25,7 +32,10 @@ const contentTypeDefs = gql`
     mediaUrls: [String]
     hashtags: [String]
     accountIds: [ID]
+    accountResults: [AccountResult!]
     status: ContentStatus!
+    statusReason: String
+    zernioPostId: String
     scheduledAt: String
     publishedAt: String
     createdAt: String
@@ -34,12 +44,11 @@ const contentTypeDefs = gql`
 
   input CreateContentInput {
     title: String!
-    platforms: [AccountPlatform!]!
     caption: String!
     contentType: ContentType!
     mediaUrls: [String]
     hashtags: [String]
-    accountIds: [ID]
+    accountIds: [ID!]
     status: ContentStatus
     scheduledAt: String
   }

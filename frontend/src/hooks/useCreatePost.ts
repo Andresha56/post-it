@@ -8,7 +8,7 @@ import { graphqlRequest } from '../lib/graphqlClient';
 import { type CreatePostType } from '../types';
 import type { PostMedia } from '../types/content';
 import { CREATE_CONTENT, CREATE_UPLOAD_URL } from '../queries/content';
-import { Status } from '../constant/content.js';
+import { Status, type ContentStatus } from '../constant/content.js';
 
 type UploadData = {
   createUploadUrl: {
@@ -21,12 +21,28 @@ type CreateData = {
   createContent: {
     success: boolean;
     message: string;
+    content: {
+      id: string;
+      status: ContentStatus;
+      statusReason: string | null;
+    } | null;
   };
 };
 
 type SavePostVariables = {
   values: CreatePostType;
   media: PostMedia | null;
+};
+
+// The status the backend reports is what actually happened at Zernio, so the
+// confirmation is based on it rather than on what was requested.
+const RESULT_MESSAGE: Record<ContentStatus, string> = {
+  DRAFT: 'Draft saved',
+  SCHEDULED: 'Post scheduled',
+  PUBLISHING: 'Publishing started — we will update the status shortly',
+  PUBLISHED: 'Post published',
+  FAILED: 'Publishing failed',
+  CANCELLED: 'Post cancelled',
 };
 
 export function useCreatePost() {
@@ -38,7 +54,8 @@ export function useCreatePost() {
       const file = media?.file;
       const uploadedKeys: string[] = [];
 
-      // 1. Upload media to S3 if a file is selected.
+      // 1. Upload media to S3 if a file is selected. A failure here rejects
+      //    before the post is created, so nothing is published without it.
       if (file) {
         const data = await graphqlRequest<UploadData>(CREATE_UPLOAD_URL, {
           input: {
@@ -48,7 +65,7 @@ export function useCreatePost() {
         });
 
         const { uploadUrl, key } = data.createUploadUrl;
-        console.log(file,"=>file")
+
         await axios.put(uploadUrl, file, {
           headers: {
             'Content-Type': file.type,
@@ -57,18 +74,19 @@ export function useCreatePost() {
 
         uploadedKeys.push(key);
       }
-      console.log(values.status)
-      // 2. Create the post after the media upload succeeds.
+
+      // 2. Create the post after the media upload succeeds. Platforms are
+      //    derived from the selected account IDs on the server.
       const input = {
         title: values.title,
-        platforms: values.platforms,
+        accountIds: values.accountIds,
         caption: values.caption,
         contentType: file
           ? media?.kind === 'image'
             ? 'IMAGE'
             : 'VIDEO'
           : 'TEXT',
-        status: values.status.toUpperCase(),
+        status: values.status,
         ...(values.status === Status.SCHEDULED && values.scheduledAt
           ? {
               scheduledAt: new Date(values.scheduledAt).toISOString(),
@@ -94,17 +112,23 @@ export function useCreatePost() {
       return result.createContent;
     },
 
-    onSuccess: async (_data, { values }) => {
+    onSuccess: async (data) => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['dashboard'] }),
         queryClient.invalidateQueries({ queryKey: ['posts'] }),
       ]);
 
-      toast.success(
-        values.status === Status.SCHEDULED
-          ? 'Post scheduled'
-          : 'Draft saved',
-      );
+      const status = data.content?.status ?? Status.DRAFT;
+
+      if (status === Status.FAILED) {
+        toast.error(data.content?.statusReason || RESULT_MESSAGE.FAILED);
+      } else {
+        toast.success(RESULT_MESSAGE[status]);
+
+        if (data.content?.statusReason) {
+          toast(data.content.statusReason);
+        }
+      }
 
       navigate('/content');
     },

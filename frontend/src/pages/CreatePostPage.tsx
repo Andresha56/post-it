@@ -1,6 +1,8 @@
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
+import { CalendarClock, Save, Send } from "lucide-react";
+import toast from "react-hot-toast";
 
 import { Button } from "../components/ui/Button";
 import {
@@ -13,17 +15,24 @@ import { inputClass, labelClass } from "../components/ui/Input";
 import { PageHeading } from "../components/layout/AppLayout";
 import { CaptionEditor } from "../components/post/CaptionEditor";
 import { MediaPicker } from "../components/post/MediaPicker";
+import { AccountSelector } from "../components/post/AccountSelector";
 import { Status } from "../constant/content";
-import { PLATFORM_LABELS, SOCIAL_PLATFORM_LIST } from "../constant/socialPlatforms";
+import { useConnectedAccounts } from "../hooks/useSocialAccounts";
 import { useCreatePost } from "../hooks/useCreatePost";
 import { createPostSchema, type CreatePostType } from "../types";
 import { useCallback, useState } from "react";
 import type { PostMedia } from "../types/content";
 
+type PublishIntent =
+  | typeof Status.DRAFT
+  | typeof Status.SCHEDULED
+  | typeof Status.PUBLISHED;
+
 export function CreatePostPage() {
   const navigate = useNavigate();
   const [media, setMedia] = useState<PostMedia | null>(null);
   const { isSubmitting, OnSave } = useCreatePost();
+  const accounts = useConnectedAccounts();
 
   const {
     control,
@@ -35,7 +44,7 @@ export function CreatePostPage() {
     defaultValues: {
       title: "",
       caption: "",
-      platforms: [],
+      accountIds: [],
       scheduledAt: "",
       hashtags: "",
       status: Status.DRAFT,
@@ -44,17 +53,38 @@ export function CreatePostPage() {
   });
 
   const scheduledAt = watch("scheduledAt");
-const onSubmit = useCallback(
-  handleSubmit(async (values) => {
-    const updatedValues = {
-      ...values,
-      status: scheduledAt ? Status.SCHEDULED : Status.DRAFT as any
-    };
+  const selectedAccountIds = watch("accountIds");
+  const connectedAccounts = accounts.data ?? [];
+  const hasConnectedAccounts = connectedAccounts.length > 0;
 
-    await OnSave(updatedValues, media);
-  }),
-  [handleSubmit, scheduledAt, OnSave, media,],
-);
+  // Publishing and scheduling both require at least one connected account;
+  // a draft can be saved without one.
+  const submitWith = useCallback(
+    (intent: PublishIntent) =>
+      handleSubmit(async (values) => {
+        if (intent !== Status.DRAFT) {
+          if (values.accountIds.length === 0) {
+            toast.error("Select at least one connected account.");
+            return;
+          }
+
+          if (
+            intent === Status.SCHEDULED &&
+            (!values.scheduledAt ||
+              new Date(values.scheduledAt).getTime() <= Date.now())
+          ) {
+            toast.error("Choose a date and time in the future.");
+            return;
+          }
+        }
+
+        await OnSave({ ...values, status: intent }, media);
+      }),
+    [handleSubmit, OnSave, media],
+  );
+
+  const disableActions = isSubmitting || accounts.isPending;
+  const disablePublishing = disableActions || !hasConnectedAccounts;
 
   return (
     <div className="mx-auto max-w-5xl">
@@ -63,7 +93,7 @@ const onSubmit = useCallback(
         description="Create content and choose where and when to publish it."
       />
 
-      <form onSubmit={onSubmit} noValidate>
+      <form onSubmit={submitWith(Status.DRAFT)} noValidate>
         <fieldset disabled={isSubmitting} className="min-w-0 border-0 p-0">
           <div className="grid gap-4 lg:grid-cols-[minmax(0,1.3fr)_minmax(280px,0.7fr)]">
             <Card>
@@ -83,6 +113,7 @@ const onSubmit = useCallback(
                         required
                         maxLength={30}
                         placeholder="A short title for your post"
+                        data-testid="post-title-input"
                         className={`${inputClass} mt-1.5 font-normal`}
                       />
                     )}
@@ -127,6 +158,7 @@ const onSubmit = useCallback(
                         value={field.value ?? ""}
                         placeholder="#ProductLaunch, SocialMedia"
                         aria-describedby="hashtags-help"
+                        data-testid="post-hashtags-input"
                         className={`${inputClass} mt-1.5 font-normal`}
                       />
                     )}
@@ -171,19 +203,44 @@ const onSubmit = useCallback(
                 <div className="flex flex-wrap justify-end gap-2">
                   <Button
                     type="button"
-                    variant="secondary"
+                    variant="ghost"
                     onClick={() => navigate("/content")}
                     disabled={isSubmitting}
+                    data-testid="cancel-post-button"
                   >
                     Cancel
                   </Button>
 
-                  <Button type="submit" disabled={isSubmitting}>
-                    {isSubmitting
-                      ? "Saving…"
-                      : status === Status.DRAFT
-                        ? "Save draft"
-                        : "Schedule post"}
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={submitWith(Status.DRAFT)}
+                    disabled={disableActions}
+                    data-testid="save-draft-button"
+                  >
+                    <Save size={15} />
+                    {isSubmitting ? "Saving…" : "Save draft"}
+                  </Button>
+
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={submitWith(Status.SCHEDULED)}
+                    disabled={disablePublishing || !scheduledAt}
+                    data-testid="schedule-post-button"
+                  >
+                    <CalendarClock size={15} />
+                    Schedule
+                  </Button>
+
+                  <Button
+                    type="button"
+                    onClick={submitWith(Status.PUBLISHED)}
+                    disabled={disablePublishing}
+                    data-testid="publish-now-button"
+                  >
+                    <Send size={15} />
+                    Publish now
                   </Button>
                 </div>
               </CardContent>
@@ -197,37 +254,38 @@ const onSubmit = useCallback(
 
                 <CardContent className="space-y-4 pt-3">
                   <div className={labelClass}>
-                    <p>Platforms</p>
+                    <p>Accounts</p>
+                    <span className="block text-xs font-normal text-[var(--text-muted)]">
+                      Select one or more connected accounts. The same post goes
+                      to every account you pick.
+                    </span>
 
                     <Controller
-                      name="platforms"
+                      name="accountIds"
                       control={control}
                       render={({ field }) => (
-                        <select
-                          value={field.value[0] ?? ""}
-                          onChange={(event) => {
-                            const value = event.target
-                              .value as CreatePostType["platforms"][number];
-                            field.onChange(value ? [value] : []);
-                          }}
-                          className={`${inputClass} mt-1.5 font-normal`}
-                        >
-                          <option value="">Select a platform</option>
-                          {SOCIAL_PLATFORM_LIST.map((platform) => (
-                            <option key={platform} value={platform}>
-                              {PLATFORM_LABELS[platform]}
-                            </option>
-                          ))}
-                        </select>
+                        <AccountSelector
+                          accounts={connectedAccounts}
+                          selected={field.value}
+                          onChange={field.onChange}
+                          isLoading={accounts.isPending}
+                          isError={accounts.isError}
+                          errorMessage={
+                            accounts.error instanceof Error
+                              ? accounts.error.message
+                              : undefined
+                          }
+                          onRetry={() => void accounts.refetch()}
+                        />
                       )}
                     />
 
-                    {errors.platforms && (
+                    {errors.accountIds && (
                       <span
                         role="alert"
                         className="mt-1 block text-sm text-red-600"
                       >
-                        {errors.platforms.message}
+                        {errors.accountIds.message}
                       </span>
                     )}
                   </div>
@@ -241,6 +299,7 @@ const onSubmit = useCallback(
                         <input
                           {...field}
                           type="datetime-local"
+                          data-testid="scheduled-at-input"
                           min={new Date(
                             Date.now() -
                               new Date().getTimezoneOffset() * 60_000,
@@ -251,6 +310,9 @@ const onSubmit = useCallback(
                         />
                       )}
                     />
+                    <span className="mt-1 block text-xs font-normal text-[var(--text-muted)]">
+                      Needed only when you schedule the post.
+                    </span>
                     {errors.scheduledAt && (
                       <span
                         role="alert"
@@ -260,6 +322,14 @@ const onSubmit = useCallback(
                       </span>
                     )}
                   </label>
+
+                  <p
+                    className="text-xs font-normal text-[var(--text-muted)]"
+                    data-testid="selected-accounts-count"
+                  >
+                    {selectedAccountIds.length} account
+                    {selectedAccountIds.length === 1 ? "" : "s"} selected
+                  </p>
                 </CardContent>
               </Card>
             </div>

@@ -1,6 +1,21 @@
+const crypto = require("node:crypto");
+
 const Content = require("../db/mongo/content.model.js");
 const { normalizeHashtags } = require("../../src/utils/hashtags.js");
 const { assertValidMediaKeys } = require("../../src/utils/mediaKeys.js");
+const {
+  CONTENT_STATUS,
+  CREATABLE_STATUSES,
+  DISCONNECTED_ACCOUNT_REASON,
+} = require("../constants/contentStatus.js");
+const {
+  assertFutureSchedule,
+  platformsFromAccounts,
+} = require("../../src/utils/publishing.js");
+const { getSelectedAccounts } = require("../services/zernioAccounts.service.js");
+const { buildMediaItems } = require("../services/zernioMedia.service.js");
+const { submitPost, revalidateScheduledPosts } = require("../services/zernioPosts.service.js");
+
 const contentResolver = {
   Query: {
     getContent: async (_, { id }, { sub }) => {
@@ -20,7 +35,14 @@ const contentResolver = {
         Content.find(filter).sort({ createdAt: -1 }).skip((safePage - 1) * safeLimit).limit(safeLimit),
         Content.countDocuments(filter),
       ]);
-      return { success: true, message: "Content retrieved successfully", contents, total };
+      // Catch an account that was disconnected without this app hearing about
+      // it, before its scheduled post can publish.
+      const checked = await revalidateScheduledPosts({
+        sub,
+        posts: contents,
+        reason: DISCONNECTED_ACCOUNT_REASON,
+      });
+      return { success: true, message: "Content retrieved successfully", contents: checked, total };
     },
   },
   Mutation: {
@@ -33,8 +55,7 @@ const contentResolver = {
           caption,
           contentType,
           title,
-          platforms,
-          status = "DRAFT",
+          status = CONTENT_STATUS.DRAFT,
           mediaUrls,
           hashtags,
           scheduledAt,
@@ -48,9 +69,6 @@ const contentResolver = {
         if (title.trim().length > 30) {
           throw new Error("Title must be 30 characters or fewer");
         }
-        if (!Array.isArray(platforms) || platforms.length === 0) {
-          throw new Error("Select at least one platform");
-        }
         // mediaUrls holds S3 object keys issued by createUploadUrl, never URLs.
         const mediaKeys = mediaUrls ?? [];
         assertValidMediaKeys({ userId: sub, contentType, mediaUrls: mediaKeys });
@@ -59,34 +77,68 @@ const contentResolver = {
           throw new Error("Caption is required");
         }
 
-        // PUBLISHED and FAILED are only ever set by the publishing workflow.
-        if (status !== "DRAFT" && status !== "SCHEDULED") {
-          throw new Error("Content can only be created as a draft or scheduled");
+        // FAILED, CANCELLED and PUBLISHING are only ever set by the
+        // publishing workflow itself.
+        if (!CREATABLE_STATUSES.includes(status)) {
+          throw new Error(
+            "Content can only be created as a draft, scheduled or published",
+          );
         }
 
+        const isDraft = status === CONTENT_STATUS.DRAFT;
+
         // The client sends an ISO-8601 UTC timestamp; it is stored as a Date.
-        let scheduledDate = null;
-        if (status === "SCHEDULED") {
-          scheduledDate = new Date(scheduledAt);
-          if (
-            !scheduledAt ||
-            Number.isNaN(scheduledDate.getTime()) ||
-            scheduledDate <= new Date()
-          ) {
-            throw new Error("A future scheduled time is required");
-          }
+        const scheduledDate =
+          status === CONTENT_STATUS.SCHEDULED
+            ? assertFutureSchedule(scheduledAt)
+            : null;
+
+        // Every account ID is checked against the accounts Zernio reports as
+        // connected for this user's profile, which covers ownership and the
+        // "must be connected" rule in one step.
+        const accounts =
+          isDraft && accountIds.length === 0
+            ? []
+            : await getSelectedAccounts(sub, accountIds);
+
+        const platforms = platformsFromAccounts(accounts);
+
+        let publishResult = null;
+
+        if (!isDraft) {
+          // Media has to be reachable by Zernio before the post is submitted;
+          // a failure here aborts before anything is written or published.
+          const mediaItems = await buildMediaItems(mediaKeys);
+
+          publishResult = await submitPost({
+            title: title.trim(),
+            caption: caption.trim(),
+            hashtags: normalizedHashtags,
+            accounts,
+            mediaItems,
+            publishNow: status === CONTENT_STATUS.PUBLISHED,
+            scheduledFor: scheduledDate,
+            idempotencyKey: crypto.randomUUID(),
+          });
         }
+
         const content = await Content.create({
           userId: sub,
           title: title.trim(),
           platforms,
           caption: caption.trim(),
           contentType,
-          status,
+          // The stored status always reflects what Zernio reported, not what
+          // the client asked for.
+          status: publishResult?.status ?? status,
+          statusReason: publishResult?.statusReason ?? null,
+          zernioPostId: publishResult?.zernioPostId ?? null,
+          accountResults: publishResult?.accountResults ?? [],
           mediaUrls: mediaKeys,
           hashtags: normalizedHashtags,
-          accountIds,
+          accountIds: accounts.map((account) => account.accountId),
           scheduledAt: scheduledDate,
+          publishedAt: publishResult?.publishedAt ?? null,
         });
 
         return {

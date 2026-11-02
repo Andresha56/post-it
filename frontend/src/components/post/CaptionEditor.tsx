@@ -7,8 +7,10 @@ import { inputClass, labelClass, textareaClass } from '../ui/Input';
 
 type Mode = 'manual' | 'ai';
 
-// UI only: the AI call is mocked until the backend generation API exists.
-const mockCaption = (prompt: string) =>
+// Temporary stand-in for the AI caption service. Replace this function when
+// the real generation backend exists; everything downstream (account
+// selection, scheduling, publishing) already treats it as normal content.
+const tempAiCaption = (prompt: string) =>
   `${prompt.trim()} — a small step today can lead to meaningful progress tomorrow. What are you working on this week?`;
 
 export function CaptionEditor({ value, onChange }: { value: string; onChange: (value: string) => void }) {
@@ -20,7 +22,7 @@ export function CaptionEditor({ value, onChange }: { value: string; onChange: (v
     if (!prompt.trim()) return toast.error('Describe what the post is about first.');
     setGenerating(true);
     setTimeout(() => {
-      onChange(mockCaption(prompt));
+      onChange(tempAiCaption(prompt));
       setGenerating(false);
       toast.success('Caption generated. You can edit it below.');
     }, 1200);
@@ -46,7 +48,7 @@ export function CaptionEditor({ value, onChange }: { value: string; onChange: (v
             aria-label="AI caption prompt"
             className={`${inputClass} font-normal`}
           />
-          <Button variant="secondary" onClick={generate} disabled={generating}>
+          <Button variant="secondary" onClick={generate} disabled={generating} data-testid="ai-generate-caption-button">
             {generating ? <Loader2 size={15} className="animate-spin" /> : <Sparkles size={15} />}
             {generating ? 'Generating…' : 'Generate'}
           </Button>
@@ -60,6 +62,7 @@ export function CaptionEditor({ value, onChange }: { value: string; onChange: (v
           rows={7}
           maxLength={500}
           placeholder="What would you like to share?"
+          data-testid="post-caption-input"
           className={`${textareaClass} mt-1.5 font-normal`}
         />
       </label>

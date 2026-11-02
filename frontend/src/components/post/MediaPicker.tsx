@@ -14,11 +14,34 @@ const accept: Record<Kind, string> = {
   video: "video/mp4,video/webm",
 };
 
-// UI only: AI generation is mocked until the backend generation API exists.
-const mockImage = (seed: string) => {
+// Temporary stand-in for the AI image service: the gradient is drawn locally
+// and handed to the normal S3 upload as a real PNG file, so AI content follows
+// exactly the same publishing path as a manual upload. Replace this function
+// when the real generation backend exists.
+const TEMP_AI_IMAGE_SIZE = { width: 800, height: 450 };
+
+const generateTempAiImage = async (seed: string): Promise<File> => {
   const hue = [...seed].reduce((sum, ch) => sum + ch.charCodeAt(0), 0) % 360;
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="hsl(${hue},70%,60%)"/><stop offset="1" stop-color="hsl(${(hue + 60) % 360},70%,45%)"/></linearGradient></defs><rect width="800" height="450" fill="url(#g)"/></svg>`;
-  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+  const canvas = document.createElement("canvas");
+  canvas.width = TEMP_AI_IMAGE_SIZE.width;
+  canvas.height = TEMP_AI_IMAGE_SIZE.height;
+
+  const context = canvas.getContext("2d");
+  if (!context) throw new Error("Could not generate the image.");
+
+  const gradient = context.createLinearGradient(0, 0, canvas.width, canvas.height);
+  gradient.addColorStop(0, `hsl(${hue}, 70%, 60%)`);
+  gradient.addColorStop(1, `hsl(${(hue + 60) % 360}, 70%, 45%)`);
+  context.fillStyle = gradient;
+  context.fillRect(0, 0, canvas.width, canvas.height);
+
+  const blob = await new Promise<Blob | null>((resolve) =>
+    canvas.toBlob(resolve, "image/png"),
+  );
+
+  if (!blob) throw new Error("Could not generate the image.");
+
+  return new File([blob], "ai-generated-image.png", { type: "image/png" });
 };
 
 export function MediaPreview({
@@ -82,24 +105,39 @@ export function MediaPicker({
     onChange({ kind, url: objectUrl.current, name: file.name, file });
   };
 
-  const generate = () => {
+  const generate = async () => {
     if (!prompt.trim())
       return toast.error(`Describe the ${kind} you want first.`);
+
     setGenerating(true);
-    setTimeout(() => {
+
+    try {
+      const file = await generateTempAiImage(prompt);
+
       release();
-      onChange(
-        kind === "image"
-          ? { kind, url: mockImage(prompt), name: "AI generated image" }
-          : {
-              kind,
-              url: null,
-              name: "AI generated video (preview coming soon)",
-            },
+      objectUrl.current = URL.createObjectURL(file);
+
+      onChange({
+        kind: "image",
+        url: objectUrl.current,
+        name: file.name,
+        file,
+      });
+
+      toast.success("Image generated. It uploads with the post.");
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Could not generate the image.",
       );
+    } finally {
       setGenerating(false);
-      toast.success(`${kind === "image" ? "Image" : "Video"} generated.`);
-    }, 1500);
+    }
+  };
+
+  const handleKindChange = (next: Kind) => {
+    setKind(next);
+    // Videos are uploaded manually only; there is no video generation.
+    if (next === "video") setSource("upload");
   };
 
   const remove = () => {
@@ -113,25 +151,27 @@ export function MediaPicker({
         <SegmentedControl
           label="Media type"
           value={kind}
-          onChange={setKind}
+          onChange={handleKindChange}
           options={[
             { value: "image", label: "Image", icon: <ImagePlus size={13} /> },
             { value: "video", label: "Video", icon: <Video size={13} /> },
           ]}
         />
-        <SegmentedControl
-          label="Media source"
-          value={source}
-          onChange={setSource}
-          options={[
-            { value: "upload", label: "Upload", icon: <Upload size={13} /> },
-            {
-              value: "ai",
-              label: "Generate with AI",
-              icon: <Sparkles size={13} />,
-            },
-          ]}
-        />
+        {kind === "image" && (
+          <SegmentedControl
+            label="Media source"
+            value={source}
+            onChange={setSource}
+            options={[
+              { value: "upload", label: "Upload", icon: <Upload size={13} /> },
+              {
+                value: "ai",
+                label: "Generate with AI",
+                icon: <Sparkles size={13} />,
+              },
+            ]}
+          />
+        )}
       </div>
 
       {source === "upload" ? (
@@ -149,6 +189,7 @@ export function MediaPicker({
           <button
             type="button"
             onClick={() => fileInput.current?.click()}
+            data-testid={`upload-${kind}-button`}
             className="flex w-full items-center gap-3 rounded-lg border border-dashed border-[var(--border)] p-3 text-left transition-colors hover:border-primary hover:bg-[var(--surface-muted)]"
           >
             <Upload size={18} className="text-[var(--text-muted)]" />
@@ -169,9 +210,15 @@ export function MediaPicker({
             onChange={(e) => setPrompt(e.target.value)}
             aria-label={`AI ${kind} prompt`}
             placeholder={`Describe the ${kind} to generate`}
+            data-testid="ai-image-prompt-input"
             className={`${inputClass} font-normal`}
           />
-          <Button variant="secondary" onClick={generate} disabled={generating}>
+          <Button
+            variant="secondary"
+            onClick={generate}
+            disabled={generating}
+            data-testid="ai-generate-image-button"
+          >
             {generating ? (
               <Loader2 size={15} className="animate-spin" />
             ) : (

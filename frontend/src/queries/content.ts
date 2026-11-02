@@ -10,9 +10,20 @@ export const CREATE_CONTENT = `
         caption
         contentType
         status
+        statusReason
+        zernioPostId
         mediaUrls
         hashtags
+        accountIds
+        accountResults {
+          accountId
+          platform
+          status
+          platformPostUrl
+          error
+        }
         scheduledAt
+        publishedAt
         createdAt
       }
     }
@@ -42,8 +53,18 @@ export const GET_CONTENTS = `
         contentType
         mediaUrls
         hashtags
+        accountIds
+        accountResults {
+          accountId
+          platform
+          status
+          platformPostUrl
+          error
+        }
         status
+        statusReason
         scheduledAt
+        publishedAt
         createdAt
       }
     }
