@@ -1,6 +1,6 @@
 import { fetchAuthSession } from 'aws-amplify/auth';
 
-const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:4000/graphql';
+const API_URL = import.meta.env.VITE_API_URL ?? 'https://post-it-qq69.onrender.com/graphql';
 console.log(API_URL,"running at")
 type GraphQLResponse<T> = { data?: T; errors?: { message: string }[] };
 
