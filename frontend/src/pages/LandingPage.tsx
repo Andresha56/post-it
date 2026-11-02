@@ -1,6 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Toaster } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../hooks/useTheme';
+import { AppRoute } from '../constant/routes';
 import Navbar from '../components/orbit-landing/Navbar';
 import Hero from '../components/orbit-landing/Hero';
 import Platforms from '../components/orbit-landing/Platforms';
@@ -9,19 +11,17 @@ import HowItWorks from '../components/orbit-landing/HowItWorks';
 import Showcase from '../components/orbit-landing/Showcase';
 import FinalCTA from '../components/orbit-landing/FinalCTA';
 import Footer from '../components/orbit-landing/Footer';
-import AuthModal from '../components/orbit-landing/AuthModal';
 import { initLenis } from '../components/orbit-landing/scroll';
 import type { AuthMode } from '../components/orbit-landing/types';
 import '../components/orbit-landing/orbit-landing.css';
 
 export default function LandingPage() {
-    const [authOpen, setAuthOpen] = useState(false);
-    const [authMode, setAuthMode] = useState<AuthMode>('signup');
+    const navigate = useNavigate();
     const { theme } = useTheme();
 
+    // Login and Get Started lead to the real AWS Cognito (Amplify) flows.
     const openAuth = (mode: AuthMode) => {
-        setAuthMode(mode);
-        setAuthOpen(true);
+        navigate(mode === 'login' ? AppRoute.SignIn : AppRoute.SignUp);
     };
 
     useEffect(() => {
@@ -45,12 +45,6 @@ export default function LandingPage() {
                 <FinalCTA onAuth={openAuth} />
             </main>
             <Footer />
-            <AuthModal
-                open={authOpen}
-                onOpenChange={setAuthOpen}
-                mode={authMode}
-                onModeChange={setAuthMode}
-            />
             <Toaster position="bottom-right" theme={theme} />
         </div>
     );
