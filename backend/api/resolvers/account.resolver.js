@@ -52,9 +52,9 @@ const accountResolvers = {
 
         const allowedPlatforms = [
           "linkedin",
-          "instagram",
+          "Instagram",
           "facebook",
-          "youtube",
+          "Youtube",
           "tiktok",
         ];
 

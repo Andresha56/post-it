@@ -15,7 +15,7 @@ const contentSchema = new mongoose.Schema(
       maxlength: 30,
     },
     platforms: {
-      type: [{ type: String, enum: ["instagram", "x", "facebook", "linkedin", "youtube"] }],
+      type: [{ type: String, enum: ["Instagram", "x", "facebook", "linkedin", "Youtube"] }],
       required: true,
       default: [],
     },
