@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import type { Theme } from '../hooks/useTheme';
-import type { Platform } from '../constant/content';
+import type { SocialPlatform } from '../constant/socialPlatforms';
 import type { AppRoute } from '../constant/routes';
 
 export enum LandingSectionId {
@@ -41,7 +41,7 @@ export type RouteLink = { label: string; to: AppRoute };
 
 export type FeatureItem = { id: FeatureId; icon: IconComponent; title: string; description: string };
 export type StepItem = { id: StepId; title: string; description: string };
-export type IntegrationItem = { platform: Platform; icon: IconComponent; iconSize: number };
+export type IntegrationItem = { platform: SocialPlatform; icon: IconComponent; iconSize: number };
 
 export type ShowcaseItem = {
   id: ShowcaseId;

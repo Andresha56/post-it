@@ -1,10 +1,10 @@
-import { CalendarDays, ChartNoAxesCombined, Instagram, Layers, Link2, Sparkles, Users } from 'lucide-react';
-import { facebookIcon, LinkedInIcon, TikTokIcon, XIcon } from '../components/ui/BrandIcons';
+import { CalendarDays, ChartNoAxesCombined, Instagram, Layers, Link2, Sparkles, Twitter, Users, Youtube } from 'lucide-react';
+import { facebookIcon, LinkedInIcon } from '../components/ui/BrandIcons';
+import { SOCIAL_PLATFORMS } from './socialPlatforms';
 import mainDark from '../assets/landing/main-dark.png';
 import mainLight from '../assets/landing/main-light.png';
 import calendarDark from '../assets/landing/calendar-dark.png';
 import calendarLight from '../assets/landing/calendar-light.png';
-import { Platform } from './content';
 import { AppRoute } from './routes';
 import {
   FeatureId, LandingSectionId, ShowcaseId, StepId,
@@ -50,11 +50,11 @@ export const DASHBOARD_PREVIEW: { url: string; caption: string; image: LandingIm
 export const INTEGRATIONS_HEADING = 'All your channels. Finally together.';
 
 export const INTEGRATIONS: IntegrationItem[] = [
-  { platform: Platform.Instagram, icon: Instagram, iconSize: 26 },
-  { platform: Platform.linkedin, icon: LinkedInIcon, iconSize: 24 },
-  { platform: Platform.TikTok, icon: TikTokIcon, iconSize: 20 },
-  { platform: Platform.X, icon: XIcon, iconSize: 18 },
-  { platform: Platform.facebook, icon: facebookIcon, iconSize: 22 }
+  { platform: SOCIAL_PLATFORMS.INSTAGRAM, icon: Instagram, iconSize: 26 },
+  { platform: SOCIAL_PLATFORMS.LINKEDIN, icon: LinkedInIcon, iconSize: 24 },
+  { platform: SOCIAL_PLATFORMS.TWITTER, icon: Twitter, iconSize: 20 },
+  { platform: SOCIAL_PLATFORMS.FACEBOOK, icon: facebookIcon, iconSize: 22 },
+  { platform: SOCIAL_PLATFORMS.YOUTUBE, icon: Youtube, iconSize: 22 },
 ];
 
 export const FEATURES_SECTION = {

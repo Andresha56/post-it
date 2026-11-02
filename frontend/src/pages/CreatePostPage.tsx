@@ -13,7 +13,8 @@ import { inputClass, labelClass } from "../components/ui/Input";
 import { PageHeading } from "../components/layout/AppLayout";
 import { CaptionEditor } from "../components/post/CaptionEditor";
 import { MediaPicker } from "../components/post/MediaPicker";
-import { socialPlatforms, Status } from "../constant/content";
+import { Status } from "../constant/content";
+import { PLATFORM_LABELS, SOCIAL_PLATFORM_LIST } from "../constant/socialPlatforms";
 import { useCreatePost } from "../hooks/useCreatePost";
 import { createPostSchema, type CreatePostType } from "../types";
 import { useCallback, useState } from "react";
@@ -212,9 +213,9 @@ const onSubmit = useCallback(
                           className={`${inputClass} mt-1.5 font-normal`}
                         >
                           <option value="">Select a platform</option>
-                          {socialPlatforms.map((platform) => (
+                          {SOCIAL_PLATFORM_LIST.map((platform) => (
                             <option key={platform} value={platform}>
-                              {platform}
+                              {PLATFORM_LABELS[platform]}
                             </option>
                           ))}
                         </select>

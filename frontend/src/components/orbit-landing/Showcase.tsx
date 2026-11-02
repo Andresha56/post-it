@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { ChevronLeft, ChevronRight, Pencil, Plus } from "lucide-react";
 import { PlatformIcon, type PlatformKey } from "./Platforms";
+import { SOCIAL_PLATFORMS } from "../../constant/socialPlatforms";
 import { Reveal } from "./Reveal";
 
 const IMG_POST =
@@ -19,16 +20,16 @@ interface Post {
 }
 
 const POSTS: Post[] = [
-    { id: 1, day: 2, platform: "Instagram", title: "Launch teaser", time: "10:30", status: "published" },
-    { id: 2, day: 4, platform: "linkedin", title: "Founder story", time: "09:00", status: "published" },
-    { id: 3, day: 9, platform: "X", title: "Weekly tips thread", time: "12:00", status: "scheduled" },
+    { id: 1, day: 2, platform: SOCIAL_PLATFORMS.INSTAGRAM, title: "Launch teaser", time: "10:30", status: "published" },
+    { id: 2, day: 4, platform: SOCIAL_PLATFORMS.LINKEDIN, title: "Founder story", time: "09:00", status: "published" },
+    { id: 3, day: 9, platform: SOCIAL_PLATFORMS.TWITTER, title: "Weekly tips thread", time: "12:00", status: "scheduled" },
     { id: 4, day: 11, platform: "tiktok", title: "Behind the scenes", time: "17:30", status: "scheduled" },
-    { id: 5, day: 16, platform: "Instagram", title: "Carousel · 5 slides", time: "11:00", status: "scheduled" },
-    { id: 6, day: 18, platform: "Youtube", title: "Tutorial premiere", time: "15:00", status: "scheduled" },
-    { id: 7, day: 21, platform: "linkedin", title: "Case study", time: "08:30", status: "draft" },
-    { id: 8, day: 23, platform: "facebook", title: "Community Q&A", time: "13:00", status: "draft" },
-    { id: 9, day: 26, platform: "Instagram", title: "Reel · month recap", time: "18:00", status: "scheduled" },
-    { id: 10, day: 28, platform: "X", title: "Feature announcement", time: "10:00", status: "draft" },
+    { id: 5, day: 16, platform: SOCIAL_PLATFORMS.INSTAGRAM, title: "Carousel · 5 slides", time: "11:00", status: "scheduled" },
+    { id: 6, day: 18, platform: SOCIAL_PLATFORMS.YOUTUBE, title: "Tutorial premiere", time: "15:00", status: "scheduled" },
+    { id: 7, day: 21, platform: SOCIAL_PLATFORMS.LINKEDIN, title: "Case study", time: "08:30", status: "draft" },
+    { id: 8, day: 23, platform: SOCIAL_PLATFORMS.FACEBOOK, title: "Community Q&A", time: "13:00", status: "draft" },
+    { id: 9, day: 26, platform: SOCIAL_PLATFORMS.INSTAGRAM, title: "Reel · month recap", time: "18:00", status: "scheduled" },
+    { id: 10, day: 28, platform: SOCIAL_PLATFORMS.TWITTER, title: "Feature announcement", time: "10:00", status: "draft" },
 ];
 
 const STATUS_STYLE: Record<Status, string> = {
@@ -38,15 +39,17 @@ const STATUS_STYLE: Record<Status, string> = {
 };
 
 const PLATFORM_COLOR: Record<PlatformKey, string> = {
-    Instagram: "#E1306C",
-    facebook: "#1877F2",
-    linkedin: "#0A66C2",
-    X: "#0F1419",
+    [SOCIAL_PLATFORMS.INSTAGRAM]: "#E1306C",
+    [SOCIAL_PLATFORMS.FACEBOOK]: "#1877F2",
+    [SOCIAL_PLATFORMS.LINKEDIN]: "#0A66C2",
+    [SOCIAL_PLATFORMS.TWITTER]: "#1DA1F2",
+    [SOCIAL_PLATFORMS.YOUTUBE]: "#FF0000",
+    [SOCIAL_PLATFORMS.THREADS]: "#000000",
+    x: "#0F1419",
     tiktok: "#0F1419",
-    Youtube: "#FF0000",
 };
 
-const FILTERS: ("all" | PlatformKey)[] = ["all", "Instagram", "linkedin", "X", "tiktok"];
+const FILTERS: ("all" | PlatformKey)[] = ["all", SOCIAL_PLATFORMS.INSTAGRAM, SOCIAL_PLATFORMS.LINKEDIN, SOCIAL_PLATFORMS.TWITTER, SOCIAL_PLATFORMS.FACEBOOK, SOCIAL_PLATFORMS.YOUTUBE, "tiktok"];
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const CELLS = [
@@ -141,9 +144,9 @@ export default function Showcase() {
                                     Connected
                                 </p>
                                 <div className="mt-2 space-y-1.5">
-                                    {(["Instagram", "linkedin", "x"] as PlatformKey[]).map((k) => (
+                                    {([SOCIAL_PLATFORMS.INSTAGRAM, SOCIAL_PLATFORMS.LINKEDIN, "x"] as PlatformKey[]).map((k) => (
                                         <div key={k} className="flex items-center gap-2 text-[11px] text-orbit-muted-foreground">
-                                            <span style={{ color: k === "X" ? "hsl(var(--orb-foreground))" : PLATFORM_COLOR[k] }}>
+                                            <span style={{ color: k === "x" ? "hsl(var(--orb-foreground))" : PLATFORM_COLOR[k] }}>
                                                 <PlatformIcon platform={k} className="size-3" />
                                             </span>
                                             @{k}.orbit
@@ -217,7 +220,7 @@ export default function Showcase() {
                                                         <span className="text-[10px] text-orbit-muted-foreground">{d}</span>
                                                         <div className="mt-1 space-y-1">
                                                             {postsByDay(d).map((p) => {
-                                                                const mono = p.platform === "X" || p.platform === "tiktok";
+                                                                const mono = p.platform === "x" || p.platform === "tiktok";
                                                                 const color = mono ? "hsl(var(--orb-foreground))" : PLATFORM_COLOR[p.platform];
                                                                 return (
                                                                     <button
@@ -332,7 +335,7 @@ export default function Showcase() {
                                                 <span
                                                     style={{
                                                         color:
-                                                            selected.platform === "X" || selected.platform === "tiktok"
+                                                            selected.platform === "x" || selected.platform === "tiktok"
                                                                 ? "hsl(var(--orb-foreground))"
                                                                 : PLATFORM_COLOR[selected.platform],
                                                     }}

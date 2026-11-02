@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { SOCIAL_PLATFORMS } = require("../../constants/socialPlatforms");
 
 const contentSchema = new mongoose.Schema(
   {
@@ -15,7 +16,7 @@ const contentSchema = new mongoose.Schema(
       maxlength: 30,
     },
     platforms: {
-      type: [{ type: String, enum: ["Instagram", "x", "facebook", "linkedin", "Youtube"] }],
+      type: [{ type: String, enum: Object.values(SOCIAL_PLATFORMS) }],
       required: true,
       default: [],
     },

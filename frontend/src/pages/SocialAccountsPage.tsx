@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { ChevronDown, Facebook, Instagram, Linkedin, Loader2, Plug, Plus, Unplug, X, Youtube } from 'lucide-react';
+import type { ElementType } from 'react';
+import { ChevronDown, Facebook, Instagram, Linkedin, Loader2, Plug, Plus, Twitter, Unplug, Youtube, X } from 'lucide-react';
+import { ThreadsIcon } from '../components/ui/BrandIcons';
+import { PLATFORM_LABELS, SOCIAL_PLATFORMS } from '../constant/socialPlatforms';
 import toast from 'react-hot-toast';
 import { PageHeading } from '../components/layout/AppLayout';
 import { Button } from '../components/ui/Button';
@@ -7,11 +10,13 @@ import { useConnectAccount, useConnectedAccounts, useDisconnectAccount } from '.
 import type { AccountPlatform } from '../queries/account';
 
 // Only platforms accepted by both the AccountPlatform enum and the connectAccount resolver.
-const platforms: { value: AccountPlatform; label: string; icon: typeof Plug }[] = [
-  { value: 'facebook', label: 'facebook', icon: Facebook },
-  { value: 'Instagram', label: 'Instagram', icon: Instagram },
-  { value: 'linkedin', label: 'linkedin', icon: Linkedin },
-  { value: 'Youtube', label: 'Youtube', icon: Youtube }
+const platforms: { value: AccountPlatform; label: string; icon: ElementType }[] = [
+  { value: SOCIAL_PLATFORMS.FACEBOOK, label: PLATFORM_LABELS.facebook, icon: Facebook },
+  { value: SOCIAL_PLATFORMS.INSTAGRAM, label: PLATFORM_LABELS.instagram, icon: Instagram },
+  { value: SOCIAL_PLATFORMS.TWITTER, label: PLATFORM_LABELS.twitter, icon: Twitter },
+  { value: SOCIAL_PLATFORMS.YOUTUBE, label: PLATFORM_LABELS.youtube, icon: Youtube },
+  { value: SOCIAL_PLATFORMS.THREADS, label: PLATFORM_LABELS.threads, icon: ThreadsIcon },
+  { value: SOCIAL_PLATFORMS.LINKEDIN, label: PLATFORM_LABELS.linkedin, icon: Linkedin },
 ];
 const platformMeta = Object.fromEntries(platforms.map((p) => [p.value, p])) as Record<AccountPlatform, (typeof platforms)[number]>;
 

@@ -18,29 +18,32 @@ import {
     Users,
 } from "lucide-react";
 import { PlatformIcon, type PlatformKey } from "./Platforms";
+import { SOCIAL_PLATFORMS } from "../../constant/socialPlatforms";
 import { EASE } from "./Reveal";
 
 const PLATFORM_COLOR: Record<PlatformKey, string> = {
-    Instagram: "#E1306C",
-    facebook: "#1877F2",
-    linkedin: "#0A66C2",
-    X: "#0F1419",
+    [SOCIAL_PLATFORMS.INSTAGRAM]: "#E1306C",
+    [SOCIAL_PLATFORMS.FACEBOOK]: "#1877F2",
+    [SOCIAL_PLATFORMS.LINKEDIN]: "#0A66C2",
+    [SOCIAL_PLATFORMS.TWITTER]: "#1DA1F2",
+    [SOCIAL_PLATFORMS.YOUTUBE]: "#FF0000",
+    [SOCIAL_PLATFORMS.THREADS]: "#000000",
+    x: "#0F1419",
     tiktok: "#0F1419",
-    Youtube: "#FF0000",
 };
 
 const BARS = [42, 66, 50, 80, 58, 88, 70, 52, 84, 64, 96, 76];
 
 const WEEK = [
-    { d: "Mon", n: 19, dots: ["Instagram", "Youtube"] as PlatformKey[] },
-    { d: "Tue", n: 20, dots: ["linkedin"] as PlatformKey[], time: "10:30" },
-    { d: "Wed", n: 21, dots: ["X", "tiktok"] as PlatformKey[] },
+    { d: "Mon", n: 19, dots: [SOCIAL_PLATFORMS.INSTAGRAM, SOCIAL_PLATFORMS.YOUTUBE] as PlatformKey[] },
+    { d: "Tue", n: 20, dots: [SOCIAL_PLATFORMS.LINKEDIN] as PlatformKey[], time: "10:30" },
+    { d: "Wed", n: 21, dots: ["x", "tiktok"] as PlatformKey[] },
     { d: "Thu", n: 22, dots: [] as PlatformKey[] },
-    { d: "Fri", n: 23, dots: ["Instagram"] as PlatformKey[] },
+    { d: "Fri", n: 23, dots: [SOCIAL_PLATFORMS.INSTAGRAM] as PlatformKey[] },
 ];
 
 function PlatformDot({ k }: { k: PlatformKey }) {
-    const mono = k === "X" || k === "tiktok";
+    const mono = k === "x" || k === "tiktok";
     return (
         <span
             className="grid size-4 place-items-center rounded-[4px]"

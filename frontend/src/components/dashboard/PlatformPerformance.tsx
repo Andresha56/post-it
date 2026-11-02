@@ -1,11 +1,12 @@
 import { Card, CardHeader, CardTitle } from '../ui/Card';
+import { PLATFORM_LABELS, SOCIAL_PLATFORMS, type SocialPlatform } from '../../constant/socialPlatforms';
 
-const platforms = [
-  { name: 'Instagram', value: '48.2K', label: 'Followers', change: '12.1%' },
-  { name: 'linkedin', value: '32.8K', label: 'Followers', change: '8.6%' },
-  { name: 'X', value: '28.1K', label: 'Followers', change: '15.4%' },
-  { name: 'facebook', value: '16.7K', label: 'Followers', change: '22.3%' },
-  { name: 'Youtube', value: '12.6K', label: 'Subscribers', change: '9.8%' }
+const platforms: { platform: SocialPlatform; value: string; label: string; change: string }[] = [
+  { platform: SOCIAL_PLATFORMS.INSTAGRAM, value: '48.2K', label: 'Followers', change: '12.1%' },
+  { platform: SOCIAL_PLATFORMS.LINKEDIN, value: '32.8K', label: 'Followers', change: '8.6%' },
+  { platform: SOCIAL_PLATFORMS.TWITTER, value: '28.1K', label: 'Followers', change: '15.4%' },
+  { platform: SOCIAL_PLATFORMS.FACEBOOK, value: '16.7K', label: 'Followers', change: '22.3%' },
+  { platform: SOCIAL_PLATFORMS.YOUTUBE, value: '12.6K', label: 'Subscribers', change: '9.8%' },
 ];
 
 export function PlatformPerformance() {
@@ -27,8 +28,8 @@ export function PlatformPerformance() {
           </thead>
           <tbody className="divide-y divide-[var(--border)]">
             {platforms.map((platform) => (
-              <tr key={platform.name}>
-                <td className="px-4 py-2 font-medium text-[var(--text)]">{platform.name}</td>
+              <tr key={platform.platform}>
+                <td className="px-4 py-2 font-medium text-[var(--text)]">{PLATFORM_LABELS[platform.platform]}</td>
                 <td className="px-4 py-2 text-[var(--text-muted)]">{platform.label}</td>
                 <td className="px-4 py-2 text-right tabular-nums text-[var(--text)]">{platform.value}</td>
                 <td className="px-4 py-2 text-right tabular-nums text-success">+{platform.change}</td>

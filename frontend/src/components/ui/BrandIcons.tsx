@@ -42,3 +42,12 @@ export function facebookIcon(props: IconProps) {
     </BrandSvg>
   );
 }
+
+export function ThreadsIcon({ size = 24, className }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+      <path d="M12 21c-4.6 0-8-3.2-8-9s3.4-9 8-9c3.9 0 6.8 2 7.6 5.4" />
+      <path d="M15.8 12.3c.6 2.7-1.2 5-3.8 5-2 0-3.5-1.2-3.5-3 0-1.9 1.7-3.1 3.9-3.1 2.6 0 4.3 1.5 4.3 4.4 0 2.9-2 4.9-4.7 4.9" />
+    </svg>
+  );
+}

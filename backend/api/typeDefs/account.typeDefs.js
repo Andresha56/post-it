@@ -1,12 +1,9 @@
 const { gql } = require("graphql-tag");
+const { SUPPORTED_PLATFORMS } = require("../constants/socialPlatforms");
 
 const accountTypeDefs = gql`
   enum AccountPlatform {
-    Instagram
-    X
-    facebook
-    linkedin
-    Youtube
+    ${SUPPORTED_PLATFORMS.join("\n    ")}
   }
 
   enum AccountStatus {

@@ -1,4 +1,6 @@
-export type AccountPlatform = 'facebook' | 'Instagram' | 'linkedin' | 'Youtube';
+import type { SocialPlatform } from '../constant/socialPlatforms';
+
+export type AccountPlatform = SocialPlatform;
 
 export type SocialAccount = {
   accountId: string;
